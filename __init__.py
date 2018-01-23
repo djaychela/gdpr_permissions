@@ -19,6 +19,7 @@ def main(global_config, **settings):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
     config.add_route('list', '/list')
+    config.add_route('users', '/users')
     config.scan()
     init_db(config)
     return config.make_wsgi_app()
