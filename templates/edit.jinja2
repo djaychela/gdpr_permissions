@@ -1,0 +1,113 @@
+{% extends "layout.jinja2" %}
+
+{% block content%}
+<div class="content">
+    <h1><span class="font-semi-bold">Pupil Edit for </span> {{ pupil.first_name }} {{ pupil.last_name }} - ID: {{ pupil.id }}</h1>
+
+</div>
+<form action="" method="post">
+<table class="table">
+    <thead>
+        <th scope = 'col'>Data</th>
+        <th scope = 'col'>Current</th>
+        <th scope = 'col'>Edit</th>
+    </thead>
+        <tbody>
+
+        <tr>
+            <td>blog</td>
+            <td>
+                {% if pupil.damers_blog %}
+                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
+                {% else %}
+                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
+                {% endif %}
+            </td>
+            <td>
+                <div class="onoffswitch">
+                    <input type="checkbox" name="damers_blog" class="onoffswitch-checkbox" value ='No' id="damers_blog" checked>
+                        <label class="onoffswitch-label" for="damers_blog">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                        </label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>twitter</td>
+            <td>
+                {% if pupil.damers_twitter %}
+                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
+                {% else %}
+                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
+                {% endif %}
+            </td>
+            <td>
+                <div class="onoffswitch">
+                    <input type="checkbox" name="onoffswitch-2" class="onoffswitch-checkbox" id="damers_twitter" {% if pupil.damers_twitter %}>
+                    {% else %}checked>
+                    {% endif %}
+                        <label class="onoffswitch-label" for="damers_twitter">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                        </label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                class photo
+            </td>
+            <td>
+                {% if pupil.damers_class_photo %}
+                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
+                {% else %}
+                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
+                {% endif %}
+            </td>
+            <td>
+                <div class="onoffswitch">
+                    <input type="checkbox" name="onoffswitch-2" class="onoffswitch-checkbox" id="damers_class_photo" checked>
+                        <label class="onoffswitch-label" for="damers_class_photo">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                        </label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                production dvd
+            </td>
+            <td>
+                {% if pupil.damers_prod_dvd %}
+                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
+                {% else %}
+                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
+                {% endif %}
+            </td>
+            <td>
+                <div class="onoffswitch">
+                    <input type="checkbox" name="onoffswitch-2" class="onoffswitch-checkbox" id="damers_prod_dvd" checked>
+                        <label class="onoffswitch-label" for="damers_prod_dvd">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                        </label>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td>
+                <button type="button" class="btn btn-secondary">Cancel</button>
+            </td>
+            <td>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </td>
+        </tr>
+    </tbody>
+    </table>
+
+    </form>
+{% endblock content %}

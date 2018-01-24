@@ -24,3 +24,4 @@ class Pupils(Base):
     dor_echo = Column(Boolean, default=False)
     cel_pound_mag = Column(Boolean, default=False)
     cel_pound_web = Column(Boolean, default=False)
+
