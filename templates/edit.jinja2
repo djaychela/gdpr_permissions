@@ -18,7 +18,7 @@
     </thead>
         <tbody>
         {%  for capability in capability_list %}
-        <tr>
+        <tr class="hideable">
             <td>{{ capability }}</td>
             <td>
                 {% if capability_current[capability] %}
