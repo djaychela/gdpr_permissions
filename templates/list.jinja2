@@ -1,119 +1,65 @@
 {% extends "layout.jinja2" %}
 
-{% block content%}
-<div class="content">
-    <h1><span class="font-semi-bold">Pupil List</span></h1>
+{% block content %}
 
-</div>
 
-<table class="table">
-    <thead>
-        <th scope = 'col'>id</th>
-        <th scope = 'col'>first</th>
-        <th scope = 'col'>last</th>
-        <th scope = 'col'>blog</th>
-        <th scope = 'col'>twitter</th>
-        <th scope = 'col'>class photo</th>
-        <th scope = 'col'>production dvd</th>
-        <th scope = 'col'>newsletter</th>
-        <th scope = 'col'>wistia video</th>
-        <th scope = 'col'>dasp web</th>
-        <th scope = 'col'>dasp music web</th>
-        <th scope = 'col'>dorset echo</th>
-        <th scope = 'col'>cel pound mag</th>
-        <th scope = 'col'>cel pound web</th>
+    <div class="content">
+        <h1><span class="font-semi-bold">Pupil List</span></h1>
+
+    </div>
+    <div class="dropdown show">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+            Pick a Class
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            {% for class_entry in classes_list %}
+                <a class="dropdown-item" href="#">{{ class_entry }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <table class="table" id="myTable">
+        <thead>
+        <th scope='col'><a href="?sort=last_name">Name</a></th>
+        <th scope='col'>Class</th>
+        {% for capability in capabilities_nice %}
+            <th scope='col'><a href="?sort={{ capability }}">{{ capabilities_nice[capability] }}</a></th>
+        {% endfor %}
         </thead>
         <tbody>
-    {% for pupil in pupils %}
         <tr>
-            <td>
-                {{ pupil.id }}
-            </td>
-            <td>
-                {{ pupil.first_name }}
-            </td>
-            <td>
-                {{ pupil.last_name }}
-            </td>
-            <td>
-                {% if pupil.damers_blog %}
-                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
+            <td>Filter:</td>
+            <td><a class="btn btn-info" href="?filter=">Clear</a></td>
+            {% for capability in capabilities_nice %}
+                {% if filter == capability %}
+                    <td><a class="btn btn-success"
+                           href="?filter={{ capability }}">{{ capabilities_nice[capability] }}</a></td>
                 {% else %}
-                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
+                    <td><a class="btn btn-secondary"
+                           href="?filter={{ capability }}">{{ capabilities_nice[capability] }}</a></td>
                 {% endif %}
-            </td>
-            <td>
-                {% if pupil.damers_twitter %}
-                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
-                {% else %}
-                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
-                {% endif %}
-            </td>
-            <td>
-                {% if pupil.damers_class_photo %}
-                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
-                {% else %}
-                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
-                {% endif %}
-            </td>
-            <td>
-                {% if pupil.damers_prod_dvd %}
-                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
-                {% else %}
-                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
-                {% endif %}
-            </td>
-            <td>
-                {% if pupil.damers_newsletter %}
-                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
-                {% else %}
-                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
-                {% endif %}
-            </td>
-            <td>
-                {% if pupil.wistia_video %}
-                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
-                {% else %}
-                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
-                {% endif %}
-            </td>
-            <td>
-                {% if pupil.dasp_web %}
-                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
-                {% else %}
-                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
-                {% endif %}
-            </td>
-            <td>
-                {% if pupil.dasp_music_web %}
-                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
-                {% else %}
-                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
-                {% endif %}
-            </td>
-            <td>
-                {% if pupil.dor_echo %}
-                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
-                {% else %}
-                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
-                {% endif %}
-            </td>
-            <td>
-                {% if pupil.cel_pound_mag %}
-                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
-                {% else %}
-                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
-                {% endif %}
-            </td>
-            <td>
-                {% if pupil.cel_pound_web %}
-                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
-                {% else %}
-                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
-                {% endif %}
-            </td>
+            {% endfor %}
         </tr>
-    {% endfor %}
-    </tbody>
+        {% for pupil in pupils %}
+            <tr>
+                <td>
+                    <a href="edit?id={{ pupil.id }}">{{ pupil.first_name }} {{ pupil.last_name }}</a>
+
+                </td>
+                <td> {{ pupil['class_info.class_strand'] }} {{ pupil['class_info.class_year'] }}</td>
+                {% for capability in capability_list %}
+                    <td>
+                        {% if pupil[capability] %}
+                            <img src="{{ request.static_url('gdpr_permissions:static/tick.png') }}" width="25">
+                        {% else %}
+                            <img src="{{ request.static_url('gdpr_permissions:static/cross.png') }}" width="25">
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
     </table>
 {% endblock content %}

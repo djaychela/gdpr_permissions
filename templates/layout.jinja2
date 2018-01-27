@@ -21,6 +21,30 @@
       <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js" integrity="sha384-0s5Pv64cNZJieYFkXYOTId2HMA2Lfb6q2nAcx2n0RTLUnCAoTTsS0nKEO27XyKcY" crossorigin="anonymous"></script>
       <script src="//oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js" integrity="sha384-f1r2UzjsxZ9T4V1f2zBO/evUqSEOpeaUUZcMTz1Up63bl4ruYnFYeM+BxI4NhyI0" crossorigin="anonymous"></script>
     <![endif]-->
+      <script src="//oss.maxcdn.com/libs/jquery/1.10.2/jquery.min.js" ></script>
+
+      <script>
+    function myFunction() {
+      // Declare variables
+      var input, filter, table, tr, td, i;
+      input = document.getElementById("myInput");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("myTable");
+      tr = table.getElementsByTagName("tr");
+
+      // Loop through all table rows, and hide those who don't match the search query
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        if (td) {
+          if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+</script>
   </head>
 
   <body>
@@ -38,36 +62,25 @@
             <li class="nav-item">
             <a class="nav-link" href="users">Users</a>
           </li>
-            <li class="nav-item">
-            <a class="nav-link" href="edit">Edit</a>
-          </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Type to search">
       </div>
     </nav>
 
     <div>
-      <div class="container">
-        <div class="row">
 
-          <div class="col-md-10">
             {% block content %}
                 <p>No content</p>
             {% endblock content %}
-          </div>
-        </div>
 
-      </div>
     </div>
 
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="//oss.maxcdn.com/libs/jquery/1.10.2/jquery.min.js" integrity="sha384-aBL3Lzi6c9LNDGvpHkZrrm3ZVsIwohDD7CDozL0pk8FwCrfmV7H9w8j3L7ikEv6h" crossorigin="anonymous"></script>
-    <script src="static/bootstrap/css/js/bootstrap.js" integrity="sha384-s1ITto93iSMDxlp/79qhWHi+LsIi9Gx6yL+cOKDuymvihkfol83TYbLbOw+W/wv4" crossorigin="anonymous"></script>
+
+    <script src="static/bootstrap/css/js/popper.min.js"></script>
+    <script src="static/bootstrap/css/js/bootstrap.bundle.js" ></script>
   </body>
 </html>

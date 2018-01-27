@@ -1,8 +1,18 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Enum
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from gdpr_permissions.data.classes import Classes
 
 Base = declarative_base()
 
+
+class Classes(Base):
+    __tablename__ = 'classes'
+
+    id = Column(Integer, primary_key=True)
+    class_strand = Column(String)
+    class_year = Column(String)
+    class_teacher = Column(String)
 
 class Pupils(Base):
     __tablename__ = 'pupils'
@@ -11,7 +21,9 @@ class Pupils(Base):
     first_name = Column(String)
     last_name = Column(String)
     other_names = Column(String)
-    class_id = Column(Integer)
+    class_id = Column(Integer, ForeignKey('classes.id'))
+    class_info = relationship('Classes')
+    overview = Column(Enum('ok','check','none'))
     damers_web = Column(Boolean, default=False)
     damers_blog = Column(Boolean, default=False)
     damers_twitter = Column(Boolean, default=False)
