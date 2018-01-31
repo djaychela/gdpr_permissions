@@ -13,15 +13,13 @@ class PupilsService:
         return pupil_return
 
     @staticmethod
-    def get_pupils_list(sort_order, filter, class_filter):
+    def get_pupils_list(sort_order, class_filter):
         session = DbSessionFactory.create_session()
         pupil_attributes = PupilsService.all_attributes()
         pupil_output_list = []
-        if filter:
-            filter_string = 'Pupils.' + filter + '== True'
-            for pupil in session.query(Pupils).filter(eval(filter_string)) \
-                    .filter(Pupils.class_id == class_filter) \
-                    .order_by(eval('Pupils.' + sort_order)):
+        if class_filter is None or class_filter=="None":
+            for pupil in session.query(Pupils) \
+                    .order_by(eval('Pupils.' + sort_order)).all():
                 current_pupil_dict = {}
                 for attribute in pupil_attributes:
                     current_pupil_dict[attribute] = eval('pupil.' + attribute)
@@ -97,7 +95,6 @@ class PupilsService:
             else:
                 exec("pupil_to_edit." + key + "=" + str(value) + "")
         session.commit()
-
         return
 
     @staticmethod
@@ -114,3 +111,50 @@ class PupilsService:
                 current_pupil_dict[attribute] = eval('pupil.' + attribute)
             pupil_attributes.append(current_pupil_dict)
         return pupil_attributes
+
+    @staticmethod
+    def create_pupil_overview(id):
+        session = DbSessionFactory.create_session()
+        pupil_capabilities = PupilsService.capabilities()
+        pupil = session.query(Pupils).get(id)
+        total_permissions = 0
+        for capability in pupil_capabilities:
+            if eval('pupil.' + capability):
+                total_permissions +=1
+        print(total_permissions)
+        if total_permissions == 0:
+            pupil.overview = 'none'
+        elif total_permissions == len(pupil_capabilities):
+            pupil.overview = 'ok'
+        else:
+            pupil.overview = 'check'
+        session.commit()
+        return
+
+    @staticmethod
+    def get_number_of_pupils():
+        session = DbSessionFactory.create_session()
+        number_of_rows = session.query(Pupils).count()
+        return number_of_rows
+
+    @staticmethod
+    def get_pupils_overview(class_filter):
+        session = DbSessionFactory.create_session()
+        pupil_overview_dict = {}
+        overview_info=['ok','check','none']
+        if class_filter == "None":
+            for overview in overview_info:
+                current_pupils_list = []
+                for pupil in session.query(Pupils).filter(Pupils.overview == overview) \
+                        .order_by(Pupils.last_name):
+                    current_pupils_list.append(pupil.first_name + " " + pupil.last_name.upper())
+                pupil_overview_dict[overview] = current_pupils_list
+        else:
+            for overview in overview_info:
+                current_pupils_list = []
+                for pupil in session.query(Pupils).filter(Pupils.class_id == class_filter)\
+                        .filter(Pupils.overview == overview)\
+                        .order_by(Pupils.last_name):
+                    current_pupils_list.append(pupil.first_name+ " "+pupil.last_name.upper())
+                pupil_overview_dict[overview]=current_pupils_list
+        return pupil_overview_dict

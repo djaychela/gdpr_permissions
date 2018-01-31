@@ -39,7 +39,7 @@ class UsersService:
     @staticmethod
     def get_users_list():
         session = DbSessionFactory.create_session()
-        user_attributes = ['id', 'username', 'pwdhash', 'cap_view', 'cap_edit']
+        user_attributes = ['id', 'username', 'password_hash', 'cap_view', 'cap_edit']
         user_output_list = []
         for user in session.query(Users).all():
             current_user_dict = {}
