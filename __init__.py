@@ -23,6 +23,8 @@ def main(global_config, **settings):
     config.add_route('edit', '/edit')
     config.add_route('list_2','/list_2')
     config.add_route('classes_list','/classes_list')
+    config.add_route('class_list_capabilities','/class_list_capabilities')
+    config.add_route('update_overview','/update_overview')
     config.scan()
     init_db(config)
     return config.make_wsgi_app()

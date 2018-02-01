@@ -14,6 +14,7 @@
         </a>
 
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="?class_filter=1,2">More</a>
             {% for class_entry in classes_dict %}
                 {% if class_entry == class_filter|int %}
                     <a class="dropdown-item active" href="?class_filter={{ class_entry }}">{{ classes_dict[class_entry] }}</a>
