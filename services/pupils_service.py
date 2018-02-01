@@ -158,3 +158,21 @@ class PupilsService:
                     current_pupils_list.append(pupil.first_name+ " "+pupil.last_name.upper())
                 pupil_overview_dict[overview]=current_pupils_list
         return pupil_overview_dict
+
+    @staticmethod
+    def create_new_pupil(pupil_info_dict):
+        session = DbSessionFactory.create_session()
+        pupil_to_store = Pupils()
+        for key in pupil_info_dict.keys():
+            if key == 'class_id':
+                exec("pupil_to_store." + key + "=" + str(pupil_info_dict[key]))
+            elif type(pupil_info_dict[key]) is str:
+                exec("pupil_to_store." + key + "='" + pupil_info_dict[key] + "'")
+            elif type(pupil_info_dict[key]) is bool:
+                exec("pupil_to_store." + key + "=" + str(pupil_info_dict[key]))
+        session.add(pupil_to_store)
+        session.commit()
+        print(pupil_to_store.id)
+        PupilsService.create_pupil_overview(pupil_to_store.id)
+
+        return

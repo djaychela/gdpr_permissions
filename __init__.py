@@ -25,6 +25,7 @@ def main(global_config, **settings):
     config.add_route('classes_list','/classes_list')
     config.add_route('class_list_capabilities','/class_list_capabilities')
     config.add_route('update_overview','/update_overview')
+    config.add_route('import_from_sheets','/import_from_sheets')
     config.scan()
     init_db(config)
     return config.make_wsgi_app()

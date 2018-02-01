@@ -2,6 +2,12 @@ from pyramid.view import view_config
 from gdpr_permissions.services.pupils_service import PupilsService
 from gdpr_permissions.services.user_service import UsersService
 from gdpr_permissions.services.classes_service import ClassesService
+from gdpr_permissions.services.sheets_import import SheetsImport
+import threading
+
+class MyThread(threading.Thread):
+    def run(self):
+        SheetsImport.import_from_sheets()
 
 
 def convert_form_boolean(form_input):
@@ -113,4 +119,5 @@ def update_overview(request):
 
 @view_config(route_name='import_from_sheets', renderer='templates/import_from_sheets.jinja2')
 def import_from_sheets(request):
+    MyThread().start()
     return {}
