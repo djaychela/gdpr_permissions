@@ -9,8 +9,12 @@ class UsersService:
         user_return = []
         for user in session.query(Users).all():
             user_return.append(user)
-
         return user_return
+
+    @classmethod
+    def by_name(cls, name):
+        session = DbSessionFactory.create_session()
+        return session.query(Users).filter(Users.username == name).first()
 
     @staticmethod
     def users_to_list(user_list):

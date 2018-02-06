@@ -1,6 +1,7 @@
 {% extends "layout.jinja2" %}
 
 {% block content %}
+    {% if request.authenticated_userid %}
     <script>
         {% for capability in capabilities_nice %}
             function toggle_{{ capability }}() {
@@ -61,8 +62,11 @@
         {% for pupil in pupils %}
             <tr class="hideable">
                 <td>
-                    <a href="edit?id={{ pupil.id }}">{{ pupil.first_name }} {{ pupil.last_name }}</a>
-
+                    {% if request.authenticated_userid == 'admin' %}
+                    <a href="admin/edit?id={{ pupil.id }}">{{ pupil.first_name }} {{ pupil.last_name }}</a>
+                    {%  else %}
+                    {{ pupil.first_name }} {{ pupil.last_name }}
+                    {% endif %}
                 </td>
                 {% for capability in capability_list %}
                     <td>
@@ -78,4 +82,7 @@
         </tbody>
     </table>
     <input type="hidden" name="class_filter" value="{{ class_filter }}">
+    {% else %}
+    <p>You will need to <a href="/signin">sign in</a> to view or edit any records.</p>
+    {% endif %}
 {% endblock content %}

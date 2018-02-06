@@ -49,23 +49,48 @@
 
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="/">GDPR</a>
+      <a class="navbar-brand" href="/">Home</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
+        {% if request.authenticated_userid %}
           <li class="nav-item">
-            <a class="nav-link" href="list_2?class_filter=None">List</a>
+            <a class="nav-link" href="/list_2?class_filter=None">List</a>
           </li>
-            <li class="nav-item">
-            <a class="nav-link" href="class_list_capabilities?class_filter=None">Summary</a>
-          </li>
-            <li class="nav-item">
-            <a class="nav-link" href="users">Users</a>
-          </li>
+        {% endif %}
+            {% if request.authenticated_userid %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">Summaries</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="nav-link" href="/class_list_capabilities?class_filter=None">Class</a>
+                        <a class="nav-link" href="/class_list_year_capabilities?year_filter=None">Year</a>
+                    </div>
+                </li>
+            {% endif %}
+            {% if request.authenticated_userid == 'admin' %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button"data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">Admin</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                        <a class="nav-link" href="/admin/import_from_sheets_1">Import</a>
+                        <a class="nav-link" href="/admin/users">Users</a>
+                        <a class="nav-link" href="/admin/year_group_update_1">Year Group Update</a>
+
+                    </div>
+                </li>
+            {% endif %}
+
         </ul>
+              {% if request.authenticated_userid %}
+            <strong>{{ request.authenticated_userid }}&nbsp;</strong>
+        <a href="{{ request.route_url('auth', action='out')}}" class="btn btn-outline-success mr-2">Sign Out</a>
+                  {% else %}
+                  <a href="signin" class="btn btn-secondary mr-2">Sign In</a>
+          {% endif %}
         <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Type to search">
       </div>
     </nav>
@@ -83,7 +108,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 
-    <script src="static/bootstrap/css/js/popper.min.js"></script>
-    <script src="static/bootstrap/css/js/bootstrap.bundle.js" ></script>
+    <script src="{{request.static_url('gdpr_permissions:static/bootstrap/css/js/popper.min.js')}}"></script>
+    <script src="{{request.static_url('gdpr_permissions:static/bootstrap/css/js/bootstrap.bundle.js')}}" ></script>
   </body>
 </html>

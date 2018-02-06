@@ -1,9 +1,25 @@
 from gdpr_permissions.data.dbsession import DbSessionFactory
 from gdpr_permissions.data.pupil import Pupils
 from gdpr_permissions.data.classes import Classes
+import gdpr_permissions.settings
 
 
 class PupilsService:
+    @staticmethod
+    def attributes():
+        return ['id', 'first_name', 'last_name', 'class_id', 'class_info.class_strand', 'class_info.class_year']
+
+    @staticmethod
+    def capabilities():
+        return ['damers_web', 'damers_blog', 'damers_twitter',
+                'damers_class_photo', 'damers_prod_dvd', 'damers_newsletter', \
+                'wistia_video', 'dasp_web', 'dasp_music_web', 'dor_echo', 'cel_pound_mag', 'cel_pound_web']
+
+    @staticmethod
+    def capabilities_nice_name():
+        return ['Web', 'Blog', 'Twitter', 'Photos', 'DVD', 'News', 'Wistia', 'DASP-W', 'DASPMW', 'D-Echo', 'PoundM',
+                'PoundW']
+
     @staticmethod
     def get_pupils():
         session = DbSessionFactory.create_session()
@@ -17,7 +33,7 @@ class PupilsService:
         session = DbSessionFactory.create_session()
         pupil_attributes = PupilsService.all_attributes()
         pupil_output_list = []
-        if class_filter is None or class_filter=="None":
+        if class_filter is None or class_filter == "None":
             for pupil in session.query(Pupils) \
                     .order_by(eval('Pupils.' + sort_order)).all():
                 current_pupil_dict = {}
@@ -54,17 +70,6 @@ class PupilsService:
         return current_capability_dict
 
     @staticmethod
-    def capabilities():
-        return ['damers_web', 'damers_blog', 'damers_twitter',
-                'damers_class_photo', 'damers_prod_dvd', 'damers_newsletter', \
-                'wistia_video', 'dasp_web', 'dasp_music_web', 'dor_echo', 'cel_pound_mag', 'cel_pound_web']
-
-    @staticmethod
-    def capabilities_nice_name():
-        return ['Web', 'Blog', 'Twitter', 'Photos', 'DVD', 'News', 'Wistia', 'DASP-W', 'DASPMW', 'D-Echo', 'PoundM',
-                'PoundW']
-
-    @staticmethod
     def capabilities_dict():
         capabilities_dict = {}
         capabilities_tag = PupilsService.capabilities()
@@ -72,10 +77,6 @@ class PupilsService:
         for i in range(len(capabilities_tag)):
             capabilities_dict[capabilities_tag[i]] = capabilities_long[i]
         return capabilities_dict
-
-    @staticmethod
-    def attributes():
-        return ['id', 'first_name', 'last_name', 'class_id', 'class_info.class_strand', 'class_info.class_year']
 
     @staticmethod
     def all_attributes():
@@ -88,13 +89,13 @@ class PupilsService:
     def store_pupil_data(data_to_store):
         session = DbSessionFactory.create_session()
         pupil_to_edit = session.query(Pupils).get(data_to_store['id'])
-        print(data_to_store)
         for key, value in data_to_store.items():
             if key in PupilsService.attributes():
                 exec("pupil_to_edit." + key + "='" + str(value) + "'")
             else:
                 exec("pupil_to_edit." + key + "=" + str(value) + "")
         session.commit()
+        PupilsService.create_pupil_overview(pupil_to_edit.id)
         return
 
     @staticmethod
@@ -120,8 +121,7 @@ class PupilsService:
         total_permissions = 0
         for capability in pupil_capabilities:
             if eval('pupil.' + capability):
-                total_permissions +=1
-        print(total_permissions)
+                total_permissions += 1
         if total_permissions == 0:
             pupil.overview = 'none'
         elif total_permissions == len(pupil_capabilities):
@@ -141,7 +141,7 @@ class PupilsService:
     def get_pupils_overview(class_filter):
         session = DbSessionFactory.create_session()
         pupil_overview_dict = {}
-        overview_info=['ok','check','none']
+        overview_info = ['ok', 'check', 'none']
         if class_filter == "None":
             for overview in overview_info:
                 current_pupils_list = []
@@ -152,11 +152,33 @@ class PupilsService:
         else:
             for overview in overview_info:
                 current_pupils_list = []
-                for pupil in session.query(Pupils).filter(Pupils.class_id == class_filter)\
-                        .filter(Pupils.overview == overview)\
+                for pupil in session.query(Pupils).filter(Pupils.class_id == class_filter) \
+                        .filter(Pupils.overview == overview) \
                         .order_by(Pupils.last_name):
-                    current_pupils_list.append(pupil.first_name+ " "+pupil.last_name.upper())
-                pupil_overview_dict[overview]=current_pupils_list
+                    current_pupils_list.append(pupil.first_name + " " + pupil.last_name.upper())
+                pupil_overview_dict[overview] = current_pupils_list
+        return pupil_overview_dict
+
+    @staticmethod
+    def get_pupils_year_overview(year_filter):
+        session = DbSessionFactory.create_session()
+        pupil_overview_dict = {}
+        overview_info = ['ok', 'check', 'none']
+        if year_filter == "None":
+            for overview in overview_info:
+                current_pupils_list = []
+                for pupil in session.query(Pupils).filter(Pupils.overview == overview) \
+                        .order_by(Pupils.last_name):
+                    current_pupils_list.append(pupil.first_name + " " + pupil.last_name.upper())
+                pupil_overview_dict[overview] = current_pupils_list
+        else:
+            for overview in overview_info:
+                current_pupils_list = []
+                for pupil in session.query(Pupils).join(Pupils.class_info).filter(
+                        Pupils.class_info.property.mapper.class_.class_year == year_filter, Pupils.overview == overview) \
+                        .order_by(Pupils.last_name):
+                    current_pupils_list.append(pupil.first_name + " " + pupil.last_name.upper())
+                pupil_overview_dict[overview] = current_pupils_list
         return pupil_overview_dict
 
     @staticmethod
@@ -175,4 +197,17 @@ class PupilsService:
         print(pupil_to_store.id)
         PupilsService.create_pupil_overview(pupil_to_store.id)
 
+        return
+
+    @staticmethod
+    def pupil_year_update():
+        session = DbSessionFactory.create_session()
+        for pupil in session.query(Pupils).all():
+            current_pupil_class = pupil.class_id
+            if current_pupil_class % 5 == 0:
+                session.query(Pupils).filter(Pupils.id == pupil.id).delete()
+            else:
+                pupil.class_id += 1
+                session.add(pupil)
+        session.commit()
         return

@@ -4,5 +4,10 @@
 <div class="content">
     <h1><span class="font-semi-bold">GDPR</span> <span class="smaller">Pupil Information Database</span></h1>
     <p class="lead">Welcome to <span class="font-normal">{{project}}</span>, an application to aid in determining pupil permissions for GDPR purposes.</p>
+    {% if not request.authenticated_userid %}
+    <p>You will need to <a href="/signin">sign in</a> to view or edit any records.</p>
+    {% endif %}
 </div>
+
+
 {% endblock content %}

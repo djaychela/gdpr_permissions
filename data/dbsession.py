@@ -21,7 +21,7 @@ class DbSessionFactory:
         conn_str = 'sqlite:///'+db_file
         print(f'Connecting to db file with {conn_str}')
 
-        engine = create_engine(conn_str, echo=False, poolclass=NullPool)
+        engine = create_engine(conn_str, connect_args={'check_same_thread': False}, echo=False, poolclass=NullPool)
         Base = declarative_base(bind=engine)
         Base.metadata.create_all(engine)
         DbSessionFactory.factory = sessionmaker(bind=engine)
