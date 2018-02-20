@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
-from pyramid.security import remember,forget
+from pyramid.security import remember, forget
 from gdpr_permissions.services.pupils_service import PupilsService
 from gdpr_permissions.services.user_service import UsersService
 from gdpr_permissions.services.classes_service import ClassesService
@@ -91,7 +91,8 @@ def classes_list(request):
     return {}
 
 
-@view_config(route_name='class_list_capabilities', renderer='templates/class_list_capabilities.jinja2', permission='view')
+@view_config(route_name='class_list_capabilities', renderer='templates/class_list_capabilities.jinja2',
+             permission='view')
 def class_list_capabilities(request):
     class_filter = request.GET.get('class_filter')
     classes_dict = ClassesService.get_all_classes()
@@ -99,14 +100,16 @@ def class_list_capabilities(request):
     return {'classes_dict': classes_dict, 'class_filter': class_filter, 'class_capability_dict': class_capability_dict}
 
 
-@view_config(route_name='class_list_year_capabilities', renderer='templates/class_list_year_capabilities.jinja2', permission='view')
+@view_config(route_name='class_list_year_capabilities', renderer='templates/class_list_year_capabilities.jinja2',
+             permission='view')
 def class_list_year_capabilities(request):
     year_filter = request.GET.get('year_filter')
     year_group_list = ClassesService.get_all_year_groups()
     year_group_list = list(set(year_group_list))
     year_group_list = sorted(year_group_list)
     year_capability_dict = PupilsService.get_pupils_year_overview(year_filter)
-    return {'year_group_list': year_group_list, 'year_filter': year_filter, 'year_capability_dict': year_capability_dict}
+    return {'year_group_list': year_group_list, 'year_filter': year_filter,
+            'year_capability_dict': year_capability_dict}
 
 
 @view_config(route_name='update_overview', renderer='templates/update_overview.jinja2')
@@ -116,15 +119,12 @@ def update_overview(request):
     return {}
 
 
-@view_config(route_name='import_from_sheets_1', renderer='templates/import_from_sheets_1.jinja2', permission='edit')
-def import_from_sheets_1(request):
-    return {}
-
-
-@view_config(route_name='import_from_sheets_2', renderer='templates/import_from_sheets_2.jinja2', permission='edit')
-def import_from_sheets_2(request):
-    MyThread().start()
-    return {}
+@view_config(route_name='import_from_sheets', renderer='templates/import_from_sheets.jinja2', permission='edit')
+def import_from_sheets(request):
+    confirm = request.POST.get('confirm')
+    if confirm:
+        MyThread().start()
+    return {'confirm':confirm}
 
 
 @view_config(route_name='auth', match_param='action=out', renderer='string')
@@ -160,4 +160,9 @@ def year_group_update_2(request):
 
 @view_config(route_name='delete_pupil', renderer='templates/delete_pupil.jinja2', permission='edit')
 def delete_pupil(request):
-    return {}
+    pupil_id = request.GET.get('id')
+    mode = request.GET.get('mode')
+    if mode == 'confirm':
+        PupilsService.delete_single_pupil(pupil_id)
+        return HTTPFound(location=request.route_url('home'))
+    return {'pupil_id': pupil_id}

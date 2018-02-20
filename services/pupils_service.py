@@ -211,3 +211,10 @@ class PupilsService:
                 session.add(pupil)
         session.commit()
         return
+
+    @staticmethod
+    def delete_single_pupil(id):
+        session = DbSessionFactory.create_session()
+        session.query(Pupils).filter(Pupils.id == id).delete()
+        session.commit()
+        return

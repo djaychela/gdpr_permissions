@@ -13,10 +13,6 @@ class AccountsService():
         hash = pbkdf2_sha256.encrypt(password, rounds=20000, salt_size=16)
         return hash
 
-    # @staticmethod
-    # def groupfinder(userid, request):
-    #     user =
-
 
 class DatabaseRecordFactory(object):
     __acl__ = [(Allow, Authenticated, 'view'),

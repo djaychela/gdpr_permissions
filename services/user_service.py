@@ -1,5 +1,6 @@
 from gdpr_permissions.data.dbsession import DbSessionFactory
 from gdpr_permissions.data.user import Users
+from gdpr_permissions.services.accounts_service import AccountsService
 
 
 class UsersService:
@@ -51,3 +52,12 @@ class UsersService:
                 current_user_dict[attribute] = eval('user.' + attribute)
             user_output_list.append(current_user_dict)
         return user_output_list
+
+    @staticmethod
+    def change_user_password(user_id, password):
+        session = DbSessionFactory.create_session()
+        user = session.query(Users).get(user_id)
+        user.pwdhash = AccountsService.create_password_hash(password)
+        session.commit()
+        return
+
