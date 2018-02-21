@@ -1,6 +1,7 @@
 from gdpr_permissions.data.dbsession import DbSessionFactory
 from gdpr_permissions.data.user import Users
 from gdpr_permissions.services.accounts_service import AccountsService
+from gdpr_permissions.services.logging_service import LoggingService
 
 
 class UsersService:
@@ -69,6 +70,8 @@ class UsersService:
         user = session.query(Users).get(user_id)
         user.password_hash = AccountsService.create_password_hash(password)
         session.commit()
+        user_log={'user_id':user_id, 'username': user.username}
+        LoggingService.add_entry(user_log, 'user','password_change')
         return
 
     @staticmethod
@@ -79,11 +82,16 @@ class UsersService:
         user_to_store.password_hash = AccountsService.create_password_hash(password)
         session.add(user_to_store)
         session.commit()
+        user_log = {'user_id': user_to_store.id, 'username': user_to_store.username}
+        LoggingService.add_entry(user_log, 'user', 'created')
         return
 
     @staticmethod
     def delete_user(user_id):
         session = DbSessionFactory.create_session()
+        user_to_log = session.query(Users).get(user_id)
         session.query(Users).filter(Users.id == user_id).delete()
         session.commit()
+        user_log = {'user_id': user_to_log.id, 'username': user_to_log.username}
+        LoggingService.add_entry(user_log, 'user', 'deleted')
         return

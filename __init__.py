@@ -5,6 +5,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 import os
 from gdpr_permissions.data.dbsession import DbSessionFactory
 import gdpr_permissions
+from gdpr_permissions.services.logging_service import LoggingService
 
 
 def init_db(config):
@@ -54,6 +55,9 @@ def main(global_config, **settings):
     # sign in pages
     config.add_route('auth', '/sign/{action}')
     config.add_route('signin', '/signin')
+
+    # logging setup
+    LoggingService.create_logfile()
 
     config.scan()
     init_db(config)

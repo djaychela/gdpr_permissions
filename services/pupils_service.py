@@ -1,6 +1,7 @@
 from gdpr_permissions.data.dbsession import DbSessionFactory
 from gdpr_permissions.data.pupil import Pupils
 from gdpr_permissions.data.classes import Classes
+from gdpr_permissions.services.logging_service import LoggingService
 import gdpr_permissions.settings
 
 
@@ -87,6 +88,7 @@ class PupilsService:
 
     @staticmethod
     def store_pupil_data(data_to_store):
+        LoggingService.add_entry(data_to_store, 'pupil', 'edit')
         session = DbSessionFactory.create_session()
         pupil_to_edit = session.query(Pupils).get(data_to_store['id'])
         for key, value in data_to_store.items():
@@ -195,7 +197,8 @@ class PupilsService:
         session.add(pupil_to_store)
         session.commit()
         PupilsService.create_pupil_overview(pupil_to_store.id)
-
+        pupil_info_dict['id'] = pupil_to_store.id
+        LoggingService.add_entry(pupil_info_dict, 'pupil', 'create')
         return
 
     @staticmethod
@@ -215,5 +218,7 @@ class PupilsService:
     def delete_single_pupil(id):
         session = DbSessionFactory.create_session()
         session.query(Pupils).filter(Pupils.id == id).delete()
+        deleted_pupil = {'id': id}
+        LoggingService.add_entry(deleted_pupil, 'pupil', 'delete')
         session.commit()
         return
