@@ -6,6 +6,7 @@ from gdpr_permissions.services.user_service import UsersService
 from gdpr_permissions.services.classes_service import ClassesService
 from gdpr_permissions.services.accounts_service import AccountsService
 from gdpr_permissions.services.sheets_import import SheetsImport
+from gdpr_permissions.services.logging_service import LoggingService
 import threading
 
 
@@ -170,6 +171,7 @@ def delete_pupil(request):
     pupil_name = pupil_info['first_name'] + ' ' + pupil_info['last_name']
     if mode == 'confirm':
         PupilsService.delete_single_pupil(pupil_id)
+        LoggingService.delete_user_entries(pupil_id)
         return HTTPFound(location=request.route_url('list'))
     return {'pupil_id': pupil_id, 'pupil_name': pupil_name}
 
@@ -247,3 +249,18 @@ def create_pupil(request):
     capability_list = PupilsService.capabilities()
     classes_dict = ClassesService.get_all_classes()
     return {'capability_list': capability_list, 'classes_dict': classes_dict}
+
+
+@view_config(route_name='logfile_read', renderer='templates/logfile_read.jinja2', permission='edit')
+def logfile_read(request):
+    logfile_contents = LoggingService.read_logfile()
+    return {'logfile_contents': logfile_contents}
+
+
+@view_config(route_name='logfile_pupil_history', renderer='templates/logfile_pupil_history.jinja2', permission='edit')
+def logfile_pupil_history(request):
+    pupil_id=int(request.GET.get('id'))
+    logfile_contents = LoggingService.read_logfile_by_id(pupil_id)
+    capability_dict = PupilsService.capabilities_dict()
+    capability_list = PupilsService.capabilities()
+    return {'logfile_contents': logfile_contents, 'capabilities_nice':capability_dict, 'capability_list':capability_list}

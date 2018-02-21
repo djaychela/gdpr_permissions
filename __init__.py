@@ -51,6 +51,8 @@ def main(global_config, **settings):
     config.add_route('year_group_update_1', '/admin/year_group_update_1')
     config.add_route('year_group_update_2', '/admin/year_group_update_2')
     config.add_route('delete_pupil', '/admin/delete_pupil')
+    config.add_route('logfile_read','/admin/logfile_read')
+    config.add_route('logfile_pupil_history','/admin/logfile_pupil_history')
 
     # sign in pages
     config.add_route('auth', '/sign/{action}')
