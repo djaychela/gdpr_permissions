@@ -7,7 +7,7 @@ import gdpr_permissions.settings
 class PupilsService:
     @staticmethod
     def attributes():
-        return ['id', 'first_name', 'last_name', 'class_id', 'class_info.class_strand', 'class_info.class_year']
+        return ['id', 'first_name', 'last_name', 'class_id']
 
     @staticmethod
     def capabilities():
@@ -194,7 +194,6 @@ class PupilsService:
                 exec("pupil_to_store." + key + "=" + str(pupil_info_dict[key]))
         session.add(pupil_to_store)
         session.commit()
-        print(pupil_to_store.id)
         PupilsService.create_pupil_overview(pupil_to_store.id)
 
         return

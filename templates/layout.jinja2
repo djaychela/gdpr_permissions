@@ -58,7 +58,7 @@
         <ul class="navbar-nav mr-auto">
         {% if request.authenticated_userid %}
           <li class="nav-item">
-            <a class="nav-link" href="/list_2?class_filter=None">List</a>
+            <a class="nav-link" href="/list?class_filter=None">List</a>
           </li>
         {% endif %}
             {% if request.authenticated_userid %}
@@ -76,9 +76,12 @@
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button"data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">Admin</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                        <h6 class="dropdown-header">Pupils</h6>
+                        <a class="nav-link" href="/admin/create_pupil">Create</a>
                         <a class="nav-link" href="/admin/import_from_sheets">Import</a>
-                        <a class="nav-link" href="/admin/users">Users</a>
                         <a class="nav-link" href="/admin/year_group_update_1">Year Group Update</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="nav-link" href="/admin/users">Users</a>
 
                     </div>
                 </li>

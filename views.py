@@ -38,7 +38,9 @@ def edit_pupil(request):
     pupil_info = PupilsService.get_single_pupil(pupil_id)
     capability_list = PupilsService.capabilities()
     capability_current = PupilsService.current_capabilities(pupil_id)
-    return {'pupil': pupil_info, 'capability_list': capability_list, 'capability_current': capability_current}
+    classes_dict = ClassesService.get_all_classes()
+    return {'pupil': pupil_info, 'capability_list': capability_list, 'capability_current': capability_current,
+            'classes_dict': classes_dict}
 
 
 @view_config(route_name='edit', renderer='templates/edit.jinja2',
@@ -57,16 +59,18 @@ def store_pupil(request):
     pupil_info = PupilsService.get_single_pupil(pupil_id)
     capability_list = PupilsService.capabilities()
     capability_current = PupilsService.current_capabilities(pupil_id)
+    classes_dict = ClassesService.get_all_classes()
     if save:
-        return {'pupil': pupil_info, 'capability_list': capability_list, 'capability_current': capability_current}
+        return {'pupil': pupil_info, 'capability_list': capability_list, 'capability_current': capability_current,
+                'classes_dict': classes_dict}
     elif save_return:
-        return HTTPFound(location=request.route_url('list_2'))
+        return HTTPFound(location=request.route_url('list'))
     elif delete_pupil:
         return HTTPFound(location=request.route_url('delete_pupil'))
 
 
-@view_config(route_name='list_2', renderer='templates/list_2.jinja2', permission='view')
-def list_2(request):
+@view_config(route_name='list', renderer='templates/list_2.jinja2', permission='view')
+def list(request):
     PupilsService.capabilities_dict()
     sort_order = request.GET.get('sort')
     if sort_order is None or sort_order == 'last_name':
@@ -105,7 +109,7 @@ def class_list_capabilities(request):
 def class_list_year_capabilities(request):
     year_filter = request.GET.get('year_filter')
     year_group_list = ClassesService.get_all_year_groups()
-    year_group_list = list(set(year_group_list))
+    year_group_list = set(year_group_list)
     year_group_list = sorted(year_group_list)
     year_capability_dict = PupilsService.get_pupils_year_overview(year_filter)
     return {'year_group_list': year_group_list, 'year_filter': year_filter,
@@ -124,7 +128,7 @@ def import_from_sheets(request):
     confirm = request.POST.get('confirm')
     if confirm:
         MyThread().start()
-    return {'confirm':confirm}
+    return {'confirm': confirm}
 
 
 @view_config(route_name='auth', match_param='action=out', renderer='string')
@@ -162,7 +166,84 @@ def year_group_update_2(request):
 def delete_pupil(request):
     pupil_id = request.GET.get('id')
     mode = request.GET.get('mode')
+    pupil_info = PupilsService.get_single_pupil(pupil_id)
+    pupil_name = pupil_info['first_name'] + ' ' + pupil_info['last_name']
     if mode == 'confirm':
         PupilsService.delete_single_pupil(pupil_id)
-        return HTTPFound(location=request.route_url('home'))
-    return {'pupil_id': pupil_id}
+        return HTTPFound(location=request.route_url('list'))
+    return {'pupil_id': pupil_id, 'pupil_name': pupil_name}
+
+
+@view_config(route_name='create_user', renderer='templates/create_user.jinja2', permission='edit')
+def create_user(request):
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    password_confirm = request.POST.get('password_confirm')
+    cancel = request.POST.get('cancel')
+    if cancel:
+        return HTTPFound(location=request.route_url('users'))
+    current_user_list = UsersService.get_users_list()
+    error_list = []
+    for user in current_user_list:
+        if user['username'] == username:
+            error_list.append('That username is already in use')
+    if password != password_confirm:
+        error_list.append('Passwords do not match')
+    if password and not error_list and password == password_confirm:
+        UsersService.create_new_user(username, password)
+        return HTTPFound(location=request.route_url('users'))
+    return {'error_list': error_list}
+
+
+@view_config(route_name='delete_user', renderer='templates/delete_user.jinja2', permission='edit')
+def delete_user(request):
+    user_id = request.GET.get('user_id')
+    confirm = request.GET.get('confirm')
+    cancel = request.GET.get('cancel')
+    if cancel:
+        return HTTPFound(location=request.route_url('users'))
+    if confirm:
+        UsersService.delete_user(user_id)
+        return HTTPFound(location=request.route_url('users'))
+    current_user_dict = UsersService.get_current_user_info(user_id)
+    username = current_user_dict['username']
+    return {'user_id': user_id, 'username': username}
+
+
+@view_config(route_name='set_password', renderer='templates/set_password.jinja2', permission='view')
+def set_password(request):
+    error = ''
+    user_id = request.GET.get('user_id')
+    confirm = request.GET.get('confirm')
+    cancel = request.GET.get('cancel')
+    password = request.GET.get('password')
+    password_confirm = request.GET.get('password_confirm')
+    if cancel:
+        return HTTPFound(location=request.route_url('users'))
+    current_user_dict = UsersService.get_current_user_info(user_id)
+    username = current_user_dict['username']
+    if password != password_confirm:
+        error = "Passwords don't match!"
+    if password and password == password_confirm:
+        UsersService.change_user_password(user_id, password)
+        return HTTPFound(location=request.route_url('users'))
+    return {'user_id': user_id, 'error': error, 'username': username}
+
+
+@view_config(route_name='create_pupil', renderer='templates/create_pupil.jinja2', permission='edit')
+def create_pupil(request):
+    cancel = request.POST.get('cancel')
+    save = request.POST.get('save')
+    if cancel:
+        return HTTPFound(location=request.route_url('list'))
+    if save:
+        pupil_data_to_store = {}
+        for attribute in PupilsService.attributes():
+            pupil_data_to_store[attribute] = request.POST.get(attribute)
+        for capability in PupilsService.capabilities():
+            pupil_data_to_store[capability] = convert_form_boolean(request.POST.get(capability))
+        PupilsService.create_new_pupil(pupil_data_to_store)
+        return HTTPFound(location=request.route_url('list'))
+    capability_list = PupilsService.capabilities()
+    classes_dict = ClassesService.get_all_classes()
+    return {'capability_list': capability_list, 'classes_dict': classes_dict}

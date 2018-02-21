@@ -54,10 +54,36 @@ class UsersService:
         return user_output_list
 
     @staticmethod
+    def get_current_user_info(user_id):
+        session = DbSessionFactory.create_session()
+        user_attributes = ['id', 'username', 'password_hash', 'cap_view', 'cap_edit']
+        user_output_dict = {}
+        user = session.query(Users).get(user_id)
+        for attribute in user_attributes:
+            user_output_dict[attribute] = eval('user.' + attribute)
+        return user_output_dict
+
+    @staticmethod
     def change_user_password(user_id, password):
         session = DbSessionFactory.create_session()
         user = session.query(Users).get(user_id)
-        user.pwdhash = AccountsService.create_password_hash(password)
+        user.password_hash = AccountsService.create_password_hash(password)
         session.commit()
         return
 
+    @staticmethod
+    def create_new_user(username, password):
+        session = DbSessionFactory.create_session()
+        user_to_store = Users()
+        user_to_store.username = username
+        user_to_store.password_hash = AccountsService.create_password_hash(password)
+        session.add(user_to_store)
+        session.commit()
+        return
+
+    @staticmethod
+    def delete_user(user_id):
+        session = DbSessionFactory.create_session()
+        session.query(Users).filter(Users.id == user_id).delete()
+        session.commit()
+        return

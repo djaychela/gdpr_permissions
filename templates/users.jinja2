@@ -2,21 +2,29 @@
 
 {% block content%}
 <div class="content">
-    <h1><span class="font-semi-bold">Users View Page</span></h1>
+    <h1><span class="font-semi-bold">User Edit Page</span></h1>
 
 </div>
 <div>
-    <ul>
+    <table class="table table-striped">
+    <tr><td>Username</td>
+        <td>password change</td>
+    <td>Delete User</td></tr>
     {%  for user in users %}
-    <li>{{ user.username }}</li>
-        {%  if user.cap_view %}
-        <li>Capability View: {{ user.cap_view }}</li>
-        {% endif %}
-        {% if user.cap_edit %}
-        <li>Capability Edit: {{ user.cap_edit }}</li>
-        {% endif %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td><a class="btn btn-primary" href="/admin/set_password?user_id={{ user.id }}">Set Password</a></td>
+            {% if user.username != 'admin' %}
+            <td><a class="btn btn-danger" href="/admin/delete_user?user_id={{ user.id }}">Delete User</a></td>
+            {% else %}
+            <td><a class="btn btn-secondary disabled" href="#">Disabled</a></td>
+            {% endif %}
+
+        </tr>
     {% endfor %}
-    </ul>
+
+    </table>
+<a href="/admin/create_user" class="btn btn-primary">Create New User</a>
 </div>
 
 

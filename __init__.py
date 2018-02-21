@@ -35,12 +35,15 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     # user pages
     config.add_route('list', '/list')
-    config.add_route('list_2', '/list_2')
     config.add_route('classes_list', '/classes_list')
     config.add_route('class_list_capabilities', '/class_list_capabilities')
     config.add_route('class_list_year_capabilities', '/class_list_year_capabilities')
     # admin pages
     config.add_route('users', '/admin/users')
+    config.add_route('create_user','/admin/create_user')
+    config.add_route('delete_user', '/admin/delete_user')
+    config.add_route('set_password', '/admin/set_password')
+    config.add_route('create_pupil','/admin/create_pupil')
     config.add_route('edit', '/admin/edit', factory='gdpr_permissions.services.accounts_service.DatabaseRecordFactory')
     config.add_route('update_overview', '/admin/update_overview')
     config.add_route('import_from_sheets', 'admin/import_from_sheets')
