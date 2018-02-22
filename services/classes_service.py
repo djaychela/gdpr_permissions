@@ -1,12 +1,14 @@
 from gdpr_permissions.data.dbsession import DbSessionFactory
 from gdpr_permissions.data.classes import Classes
 from gdpr_permissions.services.logging_service import LoggingService
+from gdpr_permissions.config import config
 
 
 class ClassesService():
     @staticmethod
     def attributes():
-        return ['id','class_strand','class_year','class_teacher']
+        attributes_list = config.class_attributes_list[:]
+        return attributes_list
 
     @staticmethod
     def get_all_classes() -> dict:

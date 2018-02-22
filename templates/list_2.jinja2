@@ -69,7 +69,7 @@
                     {% endif %}
                 </td>
                 {% for capability in capability_list %}
-                    <td>
+                    <td align="center">
                         {% if pupil[capability] %}
                             <img src="{{ request.static_url('gdpr_permissions:static/tick.png') }}" width="25">
                         {% else %}

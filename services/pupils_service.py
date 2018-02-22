@@ -2,24 +2,24 @@ from gdpr_permissions.data.dbsession import DbSessionFactory
 from gdpr_permissions.data.pupil import Pupils
 from gdpr_permissions.data.classes import Classes
 from gdpr_permissions.services.logging_service import LoggingService
-import gdpr_permissions.settings
+from gdpr_permissions.config import config
 
 
 class PupilsService:
     @staticmethod
     def attributes():
-        return ['id', 'first_name', 'last_name', 'class_id']
+        pupils_attributes_list = config.pupils_attributes_list[:]
+        return pupils_attributes_list
 
     @staticmethod
     def capabilities():
-        return ['damers_web', 'damers_blog', 'damers_twitter',
-                'damers_class_photo', 'damers_prod_dvd', 'damers_newsletter', \
-                'wistia_video', 'dasp_web', 'dasp_music_web', 'dor_echo', 'cel_pound_mag', 'cel_pound_web']
+        pupils_capabilities_list = config.pupils_capabilities_list[:]
+        return pupils_capabilities_list
 
     @staticmethod
     def capabilities_nice_name():
-        return ['Web', 'Blog', 'Twitter', 'Photos', 'DVD', 'News', 'Wistia', 'DASP-W', 'DASPMW', 'D-Echo', 'PoundM',
-                'PoundW']
+        pupils_capabilities_nice_name = config.pupils_capabilities_nice_name[:]
+        return pupils_capabilities_nice_name
 
     @staticmethod
     def get_pupils():

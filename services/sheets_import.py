@@ -1,15 +1,17 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from gdpr_permissions.services.pupils_service import PupilsService
+import os
 
 
 class SheetsImport:
     @staticmethod
     def import_from_sheets():
         scope = ['https://spreadsheets.google.com/feeds']
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(
-            '/Users/darrenjones/PycharmProjects/dj/damers/gdpr_permissions/gdpr_permissions/services/oauth2test-c0ddcb504254.json',
-            scope)
+        oath_file = 'oauth2test-c0ddcb504254.json'
+        oath_file_location = os.path.abspath('gdpr_permissions/config/'+oath_file)
+        print(oath_file_location)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(oath_file_location, scope)
         gc = gspread.authorize(credentials)
         wks = gc.open('Pupil Import Test Sheet').sheet1
 
@@ -39,3 +41,7 @@ class SheetsImport:
             current_row += 1
 
         return
+
+    @staticmethod
+    def get_file_path():
+        print(os.path.abspath('../config/oauth2test-c0ddcb504254.json'))
