@@ -34,10 +34,12 @@ def main(global_config, **settings):
     config.set_root_factory(Root)
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
+
     # user pages
     config.add_route('list', '/list')
     config.add_route('class_list_capabilities', '/class_list_capabilities')
     config.add_route('class_list_year_capabilities', '/class_list_year_capabilities')
+
     # admin pages
     config.add_route('users', '/admin/users')
     config.add_route('create_user','/admin/create_user')
@@ -60,7 +62,7 @@ def main(global_config, **settings):
     config.add_route('signin', '/signin')
 
     # logging setup
-    LoggingService.create_logfile()
+    LoggingService.start_logging()
 
     config.scan()
     init_db(config)

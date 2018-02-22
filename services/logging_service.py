@@ -7,7 +7,7 @@ log_file = 'pupil_data_logfile.json'
 
 class LoggingService:
     @staticmethod
-    def create_logfile():
+    def start_logging():
         log_file_entry = {'message': '*** SYSTEM STARTUP ***'}
         LoggingService.add_entry(log_file_entry, mode='system', action='startup')
         return
