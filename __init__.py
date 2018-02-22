@@ -36,7 +36,6 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     # user pages
     config.add_route('list', '/list')
-    config.add_route('classes_list', '/classes_list')
     config.add_route('class_list_capabilities', '/class_list_capabilities')
     config.add_route('class_list_year_capabilities', '/class_list_year_capabilities')
     # admin pages
@@ -53,6 +52,8 @@ def main(global_config, **settings):
     config.add_route('delete_pupil', '/admin/delete_pupil')
     config.add_route('logfile_read','/admin/logfile_read')
     config.add_route('logfile_pupil_history','/admin/logfile_pupil_history')
+    config.add_route('classes_list','/admin/classes_list')
+    config.add_route('class_edit','/admin/class_edit')
 
     # sign in pages
     config.add_route('auth', '/sign/{action}')

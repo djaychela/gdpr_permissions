@@ -104,13 +104,9 @@ class PupilsService:
     def pupil_join_query():
         session = DbSessionFactory.create_session()
         pupil_attributes = PupilsService.all_attributes()
-        print(pupil_attributes)
         for pupil in session.query(Pupils).join(Classes, Classes.id == Pupils.class_id).filter(Pupils.id == 1):
             current_pupil_dict = {}
-            print(pupil)
             for attribute in pupil_attributes:
-                print(attribute)
-                print(pupil.classes.class_strand)
                 current_pupil_dict[attribute] = eval('pupil.' + attribute)
             pupil_attributes.append(current_pupil_dict)
         return pupil_attributes

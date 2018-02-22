@@ -6,10 +6,12 @@
 
 </div>
 <div>
-    <table class="table table-striped">
-    <tr><td>Username</td>
-        <td>password change</td>
-    <td>Delete User</td></tr>
+    <table class="table">
+    <thead class="thead-light">
+        <th>Username</th>
+        <th>password change</th>
+        <th>Delete User</th>
+    </thead>
     {%  for user in users %}
         <tr>
             <td>{{ user.username }}</td>

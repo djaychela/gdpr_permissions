@@ -6,7 +6,7 @@
     <p>Press the confirm button below to delete pupil {{ pupil_name }}, ID:{{ pupil_id }}</p>
     <p>Press the cancel button or navigate away from this page to cancel the request.</p>
     <a href="/admin/delete_pupil?id={{ pupil_id }}&mode=confirm" class="btn btn-danger">Delete</a>
-    <a href="/list" class="btn btn-primary">Cancel</a>
+    <a href="/admin/edit?id={{ pupil_id }}" class="btn btn-primary">Cancel</a>
     {% if not request.authenticated_userid %}
     <p>You will need to <a href="/signin">sign in</a> to view or edit any records.</p>
     {% endif %}

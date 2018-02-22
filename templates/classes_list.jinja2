@@ -1,8 +1,27 @@
-{% extends "layout.jinja2" %}
+{% extends 'layout.jinja2' %}
 
-{% block content%}
-<div class="content">
-    <h1><span class="font-semi-bold">Classes List</span> <span class="smaller">Pupil Information Database</span></h1>
-
-</div>
+{% block content %}
+    <h1>Class Information</h1>
+        <span>
+            <table class="table table-sm">
+                <thead class="thead-light">
+                    {% for attribute in attributes %}
+                        <th>{{ attribute }}</th>
+                    {% endfor %}
+                <th></th>
+                </thead>
+                <tbody>
+                <tr>
+                    {% for class_info in all_class_info %}
+                        {% for attribute in attributes %}
+                           <td> {{ class_info[attribute] }} </td>
+                        {% endfor %}
+                        <td>
+                            <a class="btn btn-primary" href="/admin/class_edit?class_id={{ class_info['id'] }}">Edit</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </span>
 {% endblock content %}

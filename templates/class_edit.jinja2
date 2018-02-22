@@ -1,0 +1,29 @@
+{% extends 'layout.jinja2' %}
+
+{% block content %}
+    <h1>Class Edit</h1>
+    <form action="">
+        <table class="table">
+            <thead>
+                <th>Attribute</th>
+                <th>Value</th>
+            </thead>
+
+            <tbody>
+                {% for attribute in attributes %}
+                   <tr>
+                    <td>{{ attribute }}</td>
+                       {%  if attribute == 'id' %}
+                            <td>{{ class_info[attribute] }}</td>
+                       {% else %}
+                            <td><input type="text" name="{{ attribute }}" value="{{ class_info[attribute] }}"></td>
+                       {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    <input type="hidden" name="class_id" value="{{ class_info['id'] }}">
+    <button type="submit" class="btn btn-primary" name="submit" value="submit">Submit</button>
+    <button type="submit" class="btn btn-secondary" name="cancel" value="cancel">Cancel</button>
+    </form>
+{% endblock content %}

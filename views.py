@@ -1,4 +1,4 @@
-from pyramid.view import view_config
+from pyramid.view import view_config, forbidden_view_config
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import remember, forget
 from gdpr_permissions.services.pupils_service import PupilsService
@@ -27,6 +27,7 @@ def my_view(request):
 
 
 @view_config(route_name='users', renderer='templates/users.jinja2', permission='edit')
+@forbidden_view_config(renderer='templates/signin.jinja2')
 def user_view(request):
     users_list = UsersService.get_users_list()
     return {'users': users_list}
@@ -88,12 +89,6 @@ def list(request):
     return {'pupils': pupils_list, 'capability_list': capability_list,
             'capabilities_nice': capability_dict, 'classes_dict': classes_dict, 'filter': filter,
             'class_filter': class_filter}
-
-
-@view_config(route_name='classes_list', renderer='templates/classes_list.jinja2')
-def classes_list(request):
-    print(ClassesService.get_all_classes())
-    return {}
 
 
 @view_config(route_name='class_list_capabilities', renderer='templates/class_list_capabilities.jinja2',
@@ -259,8 +254,37 @@ def logfile_read(request):
 
 @view_config(route_name='logfile_pupil_history', renderer='templates/logfile_pupil_history.jinja2', permission='edit')
 def logfile_pupil_history(request):
-    pupil_id=int(request.GET.get('id'))
+    pupil_id = int(request.GET.get('id'))
     logfile_contents = LoggingService.read_logfile_by_id(pupil_id)
     capability_dict = PupilsService.capabilities_dict()
     capability_list = PupilsService.capabilities()
-    return {'logfile_contents': logfile_contents, 'capabilities_nice':capability_dict, 'capability_list':capability_list}
+    return {'logfile_contents': logfile_contents, 'capabilities_nice': capability_dict,
+            'capability_list': capability_list}
+
+
+@view_config(route_name='classes_list', renderer='templates/classes_list.jinja2', permission='edit')
+def classes_list(request):
+    all_class_info = ClassesService.get_all_class_info()
+    attributes = ['id', 'class_strand', 'class_year', 'class_teacher']
+    return {'all_class_info': all_class_info, 'attributes': attributes}
+
+
+@view_config(route_name='class_edit', renderer='templates/class_edit.jinja2', permission='edit')
+def class_edit(request):
+    class_id = request.GET.get('class_id')
+    cancel = request.GET.get('cancel')
+    submit = request.GET.get('submit')
+    attributes = ClassesService.attributes()
+    if cancel:
+        return HTTPFound(location=request.route_url('classes_list'))
+    if submit:
+        class_strand = request.GET.get('class_strand')
+        class_year = request.GET.get('class_year')
+        class_teacher = request.GET.get('class_teacher')
+        class_to_store = {'id': class_id}
+        for attribute in attributes[1:]:
+            class_to_store[attribute]=eval(attribute)
+        ClassesService.store_single_class_info(class_to_store)
+        return HTTPFound(location=request.route_url('classes_list'))
+    class_info = ClassesService.get_single_class_info(class_id)
+    return {'class_info': class_info, 'attributes': attributes}

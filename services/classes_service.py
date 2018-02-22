@@ -1,8 +1,13 @@
 from gdpr_permissions.data.dbsession import DbSessionFactory
 from gdpr_permissions.data.classes import Classes
+from gdpr_permissions.services.logging_service import LoggingService
 
 
 class ClassesService():
+    @staticmethod
+    def attributes():
+        return ['id','class_strand','class_year','class_teacher']
+
     @staticmethod
     def get_all_classes() -> dict:
         session = DbSessionFactory.create_session()
@@ -20,3 +25,35 @@ class ClassesService():
             year_return.append(classes.class_year)
         return year_return
 
+    @staticmethod
+    def get_all_class_info() -> list:
+        attributes = ClassesService.attributes()
+        session = DbSessionFactory.create_session()
+        class_info_return = []
+        for classes in session.query(Classes).order_by(Classes.id).all():
+            current_class_dict = {}
+            for attribute in attributes:
+                current_class_dict[attribute]=eval('classes.'+attribute)
+            class_info_return.append(current_class_dict)
+        return class_info_return
+
+    @staticmethod
+    def get_single_class_info(id) -> dict:
+        attributes = ClassesService.attributes()
+        session = DbSessionFactory.create_session()
+        class_info_return = {}
+        class_info = session.query(Classes).get(id)
+        for attribute in attributes:
+            class_info_return[attribute] = eval('class_info.'+attribute)
+        return class_info
+
+    @staticmethod
+    def store_single_class_info(class_info):
+        attributes = ClassesService.attributes()
+        session = DbSessionFactory.create_session()
+        class_to_store = session.query(Classes).get(class_info['id'])
+        for attribute in attributes[1:]:
+            exec("class_to_store." + attribute + "='" + class_info[attribute] + "'")
+        LoggingService.add_entry(class_info, 'class','edit')
+        session.commit()
+        return
