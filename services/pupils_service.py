@@ -204,6 +204,7 @@ class PupilsService:
             current_pupil_class = pupil.class_id
             if current_pupil_class % 5 == 0:
                 session.query(Pupils).filter(Pupils.id == pupil.id).delete()
+                LoggingService.delete_user_entries(pupil.id)
             else:
                 pupil.class_id += 1
                 session.add(pupil)
@@ -216,5 +217,19 @@ class PupilsService:
         session.query(Pupils).filter(Pupils.id == id).delete()
         deleted_pupil = {'id': id}
         LoggingService.add_entry(deleted_pupil, 'pupil', 'delete')
+        session.commit()
+        return
+
+    @staticmethod
+    def update_pupil_classes(old_class, new_class):
+        session = DbSessionFactory.create_session()
+        for pupil in session.query(Pupils).filter(Pupils.class_id == old_class):
+            pupil.class_id = new_class
+            pupil_log = {'id': pupil.id, 'class_id': new_class}
+            for attribute in PupilsService.attributes():
+                pupil_log[attribute] = eval('pupil.' + attribute)
+            for capability in PupilsService.capabilities():
+                pupil_log[capability] = eval('pupil.' + capability)
+            LoggingService.add_entry(pupil_log, 'pupil', 'move')
         session.commit()
         return

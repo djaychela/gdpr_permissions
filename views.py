@@ -71,7 +71,7 @@ def store_pupil(request):
         return HTTPFound(location=request.route_url('delete_pupil'))
 
 
-@view_config(route_name='list', renderer='templates/list_2.jinja2', permission='view')
+@view_config(route_name='list', renderer='templates/list.jinja2', permission='view')
 def list(request):
     PupilsService.capabilities_dict()
     sort_order = request.GET.get('sort')
@@ -110,13 +110,6 @@ def class_list_year_capabilities(request):
     year_capability_dict = PupilsService.get_pupils_year_overview(year_filter)
     return {'year_group_list': year_group_list, 'year_filter': year_filter,
             'year_capability_dict': year_capability_dict}
-
-
-@view_config(route_name='update_overview', renderer='templates/update_overview.jinja2')
-def update_overview(request):
-    for i in range(PupilsService.get_number_of_pupils()):
-        _ = PupilsService.create_pupil_overview(i + 1)
-    return {}
 
 
 @view_config(route_name='import_from_sheets', renderer='templates/import_from_sheets.jinja2', permission='edit')
@@ -283,8 +276,46 @@ def class_edit(request):
         class_teacher = request.GET.get('class_teacher')
         class_to_store = {'id': class_id}
         for attribute in attributes[1:]:
-            class_to_store[attribute]=eval(attribute)
+            class_to_store[attribute] = eval(attribute)
         ClassesService.store_single_class_info(class_to_store)
         return HTTPFound(location=request.route_url('classes_list'))
     class_info = ClassesService.get_single_class_info(class_id)
     return {'class_info': class_info, 'attributes': attributes}
+
+
+@view_config(route_name='class_create', renderer='templates/class_create.jinja2', permission='edit')
+def class_create(request):
+    cancel = request.GET.get('cancel')
+    submit = request.GET.get('submit')
+    attributes = ClassesService.attributes()[1:]
+    if cancel:
+        return HTTPFound(location=request.route_url('classes_list'))
+    if submit:
+        class_strand = request.GET.get('class_strand')
+        class_year = request.GET.get('class_year')
+        class_teacher = request.GET.get('class_teacher')
+        class_to_store = {}
+        for attribute in attributes:
+            class_to_store[attribute] = eval(attribute)
+        ClassesService.create_new_class(class_to_store)
+        return HTTPFound(location=request.route_url('classes_list'))
+
+    return {'attributes': attributes}
+
+
+@view_config(route_name='class_delete', renderer='templates/class_delete.jinja2', permission='edit')
+def class_delete(request):
+    cancel = request.GET.get('cancel')
+    confirm = request.GET.get('confirm')
+    class_id = request.GET.get('class_id')
+    new_class_id = request.GET.get('new_class_id')
+    if cancel:
+        return HTTPFound(location=request.route_url('classes_list'))
+    if confirm:
+        PupilsService.update_pupil_classes(class_id, new_class_id)
+        ClassesService.delete_class(class_id)
+        return HTTPFound(location=request.route_url('classes_list'))
+    classes_dict = ClassesService.get_all_classes()
+    class_info = ClassesService.get_single_class_info(class_id)
+    del classes_dict[int(class_id)]
+    return {'class_id': class_id, 'class_info': class_info, 'classes_dict': classes_dict}

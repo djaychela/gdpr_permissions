@@ -56,6 +56,26 @@ class ClassesService():
         class_to_store = session.query(Classes).get(class_info['id'])
         for attribute in attributes[1:]:
             exec("class_to_store." + attribute + "='" + class_info[attribute] + "'")
+        session.commit()
         LoggingService.add_entry(class_info, 'class','edit')
+        return
+
+    @staticmethod
+    def create_new_class(class_info):
+        session = DbSessionFactory.create_session()
+        class_to_store = Classes()
+        for key in class_info.keys():
+            exec("class_to_store." + key + "='" + class_info[key] + "'")
+        session.add(class_to_store)
+        session.commit()
+        LoggingService.add_entry(class_info, 'class', 'create')
+        return
+
+    @staticmethod
+    def delete_class(class_id):
+        session = DbSessionFactory.create_session()
+        session.query(Classes).filter(Classes.id == class_id).delete()
+        deleted_class = {'id': class_id}
+        LoggingService.add_entry(deleted_class, 'class', 'delete')
         session.commit()
         return

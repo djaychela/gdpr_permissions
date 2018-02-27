@@ -18,10 +18,12 @@
                         {% endfor %}
                         <td>
                             <a class="btn btn-primary" href="/admin/class_edit?class_id={{ class_info['id'] }}">Edit</a>
+                            <a class="btn btn-danger" href="/admin/class_delete?class_id={{ class_info['id'] }}">Delete</a>
                         </td>
                     </tr>
                 {% endfor %}
-            </tbody>
+            <tr><td colspan="5"><a class="btn btn-primary" href="/admin/class_create">Create New Class</a></td> </tr>
+                </tbody>
             </table>
         </span>
 {% endblock content %}

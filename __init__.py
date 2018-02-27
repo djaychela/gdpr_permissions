@@ -47,7 +47,6 @@ def main(global_config, **settings):
     config.add_route('set_password', '/admin/set_password')
     config.add_route('create_pupil','/admin/create_pupil')
     config.add_route('edit', '/admin/edit', factory='gdpr_permissions.services.accounts_service.DatabaseRecordFactory')
-    config.add_route('update_overview', '/admin/update_overview')
     config.add_route('import_from_sheets', 'admin/import_from_sheets')
     config.add_route('year_group_update_1', '/admin/year_group_update_1')
     config.add_route('year_group_update_2', '/admin/year_group_update_2')
@@ -56,6 +55,8 @@ def main(global_config, **settings):
     config.add_route('logfile_pupil_history','/admin/logfile_pupil_history')
     config.add_route('classes_list','/admin/classes_list')
     config.add_route('class_edit','/admin/class_edit')
+    config.add_route('class_create', '/admin/class_create')
+    config.add_route('class_delete', '/admin/class_delete')
 
     # sign in pages
     config.add_route('auth', '/sign/{action}')
