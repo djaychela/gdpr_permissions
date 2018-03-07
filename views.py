@@ -5,6 +5,7 @@ from gdpr_permissions.services.pupils_service import PupilsService
 from gdpr_permissions.services.user_service import UsersService
 from gdpr_permissions.services.classes_service import ClassesService
 from gdpr_permissions.services.accounts_service import AccountsService
+from gdpr_permissions.services.capabilities_service import CapabilitiesService
 from gdpr_permissions.services.sheets_import import SheetsImport
 from gdpr_permissions.services.logging_service import LoggingService
 import threading
@@ -72,8 +73,7 @@ def store_pupil(request):
 
 
 @view_config(route_name='list', renderer='templates/list.jinja2', permission='view')
-def list(request):
-    PupilsService.capabilities_dict()
+def list_pupils(request):
     sort_order = request.GET.get('sort')
     if sort_order is None or sort_order == 'last_name':
         sort_order = 'last_name.asc()'
@@ -319,3 +319,35 @@ def class_delete(request):
     class_info = ClassesService.get_single_class_info(class_id)
     del classes_dict[int(class_id)]
     return {'class_id': class_id, 'class_info': class_info, 'classes_dict': classes_dict}
+
+
+@view_config(route_name='capabilities_list', renderer='templates/capabilities_list.jinja2', permission='edit')
+def capability_list(request):
+    all_capabilities = CapabilitiesService.get_all_capabilities()
+    columns = CapabilitiesService.list_all_attributes()
+    return {'all_capabilities': all_capabilities, 'columns': columns}
+
+
+@view_config(route_name='capability_edit', renderer='templates/capability_edit.jinja2', permission='edit')
+def capability_edit(request):
+    cap_id = request.GET.get('cap_id')
+    submit = request.GET.get('submit')
+    cancel = request.GET.get('cancel')
+    if cancel:
+        return HTTPFound(location=request.route_url('capabilities_list'))
+    if submit:
+        capability = request.GET.get('capability')
+        capability_nice = request.GET.get('capability_nice')
+        active = request.GET.get('active')
+        if active is None:
+            active = True
+        else:
+            active = False
+        cap_to_store = {'id':cap_id}
+        for attribute in CapabilitiesService.list_all_attributes()[1:]:
+            cap_to_store[attribute]=eval(attribute)
+        CapabilitiesService.update_capability(cap_to_store)
+        return HTTPFound(location=request.route_url('capabilities_list'))
+    capability_info = CapabilitiesService.get_single_capability(cap_id)
+    attributes = CapabilitiesService.list_all_attributes()
+    return {'capability_info':capability_info, 'attributes': attributes}

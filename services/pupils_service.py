@@ -1,6 +1,7 @@
 from gdpr_permissions.data.dbsession import DbSessionFactory
 from gdpr_permissions.data.pupil import Pupils
 from gdpr_permissions.data.classes import Classes
+from gdpr_permissions.services.capabilities_service import CapabilitiesService
 from gdpr_permissions.services.logging_service import LoggingService
 from gdpr_permissions.config import config
 
@@ -12,13 +13,20 @@ class PupilsService:
         return pupils_attributes_list
 
     @staticmethod
+    def all_attributes():
+        attributes_list = PupilsService.attributes()
+        for attribute in PupilsService.capabilities():
+            attributes_list.append(attribute)
+        return attributes_list
+
+    @staticmethod
     def capabilities():
-        pupils_capabilities_list = config.pupils_capabilities_list[:]
+        pupils_capabilities_list = CapabilitiesService.get_capabilities()
         return pupils_capabilities_list
 
     @staticmethod
     def capabilities_nice_name():
-        pupils_capabilities_nice_name = config.pupils_capabilities_nice_name[:]
+        pupils_capabilities_nice_name = CapabilitiesService.get_capabilities(mode='nice')
         return pupils_capabilities_nice_name
 
     @staticmethod
@@ -79,12 +87,7 @@ class PupilsService:
             capabilities_dict[capabilities_tag[i]] = capabilities_long[i]
         return capabilities_dict
 
-    @staticmethod
-    def all_attributes():
-        attributes_list = PupilsService.attributes()
-        for attribute in PupilsService.capabilities():
-            attributes_list.append(attribute)
-        return attributes_list
+
 
     @staticmethod
     def store_pupil_data(data_to_store):
@@ -95,7 +98,7 @@ class PupilsService:
             if key in PupilsService.attributes():
                 exec("pupil_to_edit." + key + "='" + str(value) + "'")
             else:
-                exec("pupil_to_edit." + key + "=" + str(value) + "")
+                exec("pupil_to_edit." + key + "=" + str(value))
         session.commit()
         PupilsService.create_pupil_overview(pupil_to_edit.id)
         return
@@ -212,10 +215,10 @@ class PupilsService:
         return
 
     @staticmethod
-    def delete_single_pupil(id):
+    def delete_single_pupil(pupil_id):
         session = DbSessionFactory.create_session()
-        session.query(Pupils).filter(Pupils.id == id).delete()
-        deleted_pupil = {'id': id}
+        session.query(Pupils).filter(Pupils.id == pupil_id).delete()
+        deleted_pupil = {'id': pupil_id}
         LoggingService.add_entry(deleted_pupil, 'pupil', 'delete')
         session.commit()
         return
