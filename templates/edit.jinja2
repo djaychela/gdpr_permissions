@@ -49,7 +49,7 @@
                     {%  for capability in capability_list %}
                         <tr class="hideable">
                             <td>
-                                {{ capability }}
+                                {{ capability_names[capability] }}
                             </td>
                             <td>
                                 {% if capability_current[capability] %}

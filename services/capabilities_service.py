@@ -4,20 +4,28 @@ from gdpr_permissions.data.dbsession import DbSessionFactory
 
 class CapabilitiesService():
     @staticmethod
-    def list_all_attributes():
+    def list_all_attributes() -> list:
         return ['id', 'capability', 'capability_nice', 'active']
 
     @staticmethod
-    def get_capabilities(mode=''):
+    def get_capabilities_keys() -> list:
         session = DbSessionFactory.create_session()
-        capability_output_list = []
+        capability_keys_list = []
+        for capability_key in session.query(Capabilities).order_by('id'):
+            capability_keys_list.append('c' + str(capability_key.id))
+        return capability_keys_list
+
+    @staticmethod
+    def get_capabilities(mode='') -> dict:
+        session = DbSessionFactory.create_session()
+        capability_output_dict = {}
         for capability in session.query(Capabilities).order_by('id'):
             if capability.active:
                 if mode == 'nice':
-                    capability_output_list.append(capability.capability_nice)
+                    capability_output_dict['c'+ str(capability.id)] = capability.capability_nice
                 else:
-                    capability_output_list.append(capability.capability)
-        return capability_output_list
+                    capability_output_dict['c'+ str(capability.id)] = capability.capability
+        return capability_output_dict
 
     @staticmethod
     def get_all_capabilities():

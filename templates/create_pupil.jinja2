@@ -37,16 +37,16 @@
 
 
         </tr>
-        {%  for capability in capability_list %}
+        {%  for key in capability_keys %}
         <tr class="hideable">
-            <td>{{ capability }}</td>
+            <td>{{ capability_names[key] }}</td>
 
             <td>
                 <div class="onoffswitch">
-                    <input type="checkbox" name="{{ capability }}" class="onoffswitch-checkbox" value ='No' \
-                           id="{{ capability }}" >
+                    <input type="checkbox" name="{{ key }}" class="onoffswitch-checkbox" value ='No' \
+                           id="{{ key }}" >
 
-                        <label class="onoffswitch-label" for="{{ capability }}">
+                        <label class="onoffswitch-label" for="{{ key }}">
                         <span class="onoffswitch-inner"></span>
                         <span class="onoffswitch-switch"></span>
                         </label>

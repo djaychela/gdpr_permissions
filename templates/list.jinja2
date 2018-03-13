@@ -3,12 +3,12 @@
 {% block content %}
     {% if request.authenticated_userid %}
     <script>
-        {% for capability in capabilities_nice %}
-            function toggle_{{ capability }}() {
+        {% for key in capabilities_keys %}
+            function toggle_{{ key }}() {
 
             var table, td, i;
             table = document.getElementById("myTable");
-            td = table.getElementsByClassName("div_{{ capability }}");
+            td = table.getElementsByClassName("div_{{ key }}");
 
             // Loop through all table rows, and hide those who don't match the search query
               for (i = 0; i < td.length; i++) {
@@ -58,8 +58,8 @@
         <thead>
 
             <th><a class="btn btn-info" id="button_clear" href="?class_filter={{ class_filter }}">Clear</a></th>
-            {% for capability in capabilities_nice %}
-                <th><span class="badge badge-success" data-toggle="button" onclick="toggle_{{ capability }}()">{{ capabilities_nice[capability] }}</span></th>
+            {% for key in capabilities_keys %}
+                <th><span class="badge badge-success" data-toggle="button" onclick="toggle_{{ key }}()">{{ capabilities_nice[key] }}</span></th>
             {% endfor %}
         </thead>
         <tbody>

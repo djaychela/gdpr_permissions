@@ -8,7 +8,7 @@
             <thead>
                 <th>Date and Time</th>
                 {% for capability in capabilities_nice %}
-                    <th><button class="btn btn-success disabled">{{ capabilities_nice[capability] }}</button></th>
+                    <th style="text-align: center"><span class="badge badge-success disabled">{{ capabilities_nice[capability] }}</span></th>
                 {% endfor %}
             </thead>
             <tbody>
@@ -30,7 +30,7 @@
                         {% endif %}
                     </td>
                     {% for capability in capability_list %}
-                        <td align="center">
+                        <td style="text-align: center">
                             {% if log_entry[capability] %}
                                 <img src="{{ request.static_url('gdpr_permissions:static/tick.png') }}" width="25">
                             {% else %}

@@ -9,25 +9,14 @@ from gdpr_permissions.config import config
 class PupilsService:
     @staticmethod
     def attributes():
-        pupils_attributes_list = config.pupils_attributes_list[:]
-        return pupils_attributes_list
+        pupils_attributes_dict = config.pupils_attributes_dict.copy()
+        return pupils_attributes_dict
 
     @staticmethod
     def all_attributes():
-        attributes_list = PupilsService.attributes()
-        for attribute in PupilsService.capabilities():
-            attributes_list.append(attribute)
-        return attributes_list
-
-    @staticmethod
-    def capabilities():
-        pupils_capabilities_list = CapabilitiesService.get_capabilities()
-        return pupils_capabilities_list
-
-    @staticmethod
-    def capabilities_nice_name():
-        pupils_capabilities_nice_name = CapabilitiesService.get_capabilities(mode='nice')
-        return pupils_capabilities_nice_name
+        attributes_dict = PupilsService.attributes()
+        attributes_dict.update(CapabilitiesService.get_capabilities())
+        return attributes_dict
 
     @staticmethod
     def get_pupils():
@@ -50,11 +39,12 @@ class PupilsService:
                     current_pupil_dict[attribute] = eval('pupil.' + attribute)
                 pupil_output_list.append(current_pupil_dict)
         else:
+            # .order_by(eval('Pupils.' + sort_order))
             for pupil in session.query(Pupils).filter(Pupils.class_id == class_filter) \
-                    .order_by(eval('Pupils.' + sort_order)).all():
+                    .all():
                 current_pupil_dict = {}
-                for attribute in pupil_attributes:
-                    current_pupil_dict[attribute] = eval('pupil.' + attribute)
+                for attribute in pupil_attributes.keys():
+                    current_pupil_dict[attribute] = eval('pupil.' + str(attribute))
                 pupil_output_list.append(current_pupil_dict)
         return pupil_output_list
 
@@ -71,7 +61,7 @@ class PupilsService:
     @staticmethod
     def current_capabilities(id):
         session = DbSessionFactory.create_session()
-        pupil_capabilities = PupilsService.capabilities()
+        pupil_capabilities = CapabilitiesService.get_capabilities()
         for pupil in session.query(Pupils).filter(Pupils.id == id):
             current_capability_dict = {}
             for capability in pupil_capabilities:
@@ -81,8 +71,8 @@ class PupilsService:
     @staticmethod
     def capabilities_dict():
         capabilities_dict = {}
-        capabilities_tag = PupilsService.capabilities()
-        capabilities_long = PupilsService.capabilities_nice_name()
+        capabilities_tag = list(CapabilitiesService.get_capabilities().values())
+        capabilities_long = list(CapabilitiesService.get_capabilities(mode='nice').values())
         for i in range(len(capabilities_tag)):
             capabilities_dict[capabilities_tag[i]] = capabilities_long[i]
         return capabilities_dict
@@ -104,20 +94,9 @@ class PupilsService:
         return
 
     @staticmethod
-    def pupil_join_query():
-        session = DbSessionFactory.create_session()
-        pupil_attributes = PupilsService.all_attributes()
-        for pupil in session.query(Pupils).join(Classes, Classes.id == Pupils.class_id).filter(Pupils.id == 1):
-            current_pupil_dict = {}
-            for attribute in pupil_attributes:
-                current_pupil_dict[attribute] = eval('pupil.' + attribute)
-            pupil_attributes.append(current_pupil_dict)
-        return pupil_attributes
-
-    @staticmethod
     def create_pupil_overview(id):
         session = DbSessionFactory.create_session()
-        pupil_capabilities = PupilsService.capabilities()
+        pupil_capabilities = CapabilitiesService.get_capabilities()
         pupil = session.query(Pupils).get(id)
         total_permissions = 0
         for capability in pupil_capabilities:
@@ -132,11 +111,7 @@ class PupilsService:
         session.commit()
         return
 
-    @staticmethod
-    def get_number_of_pupils():
-        session = DbSessionFactory.create_session()
-        number_of_rows = session.query(Pupils).count()
-        return number_of_rows
+
 
     @staticmethod
     def get_pupils_overview(class_filter):
@@ -231,8 +206,36 @@ class PupilsService:
             pupil_log = {'id': pupil.id, 'class_id': new_class}
             for attribute in PupilsService.attributes():
                 pupil_log[attribute] = eval('pupil.' + attribute)
-            for capability in PupilsService.capabilities():
+            for capability in CapabilitiesService.get_capabilities():
                 pupil_log[capability] = eval('pupil.' + capability)
             LoggingService.add_entry(pupil_log, 'pupil', 'move')
         session.commit()
         return
+
+    # @staticmethod
+    # def get_number_of_pupils():
+    #     session = DbSessionFactory.create_session()
+    #     number_of_rows = session.query(Pupils).count()
+    #     return number_of_rows
+
+
+    # @staticmethod
+    # def pupil_join_query():
+    #     session = DbSessionFactory.create_session()
+    #     pupil_attributes = PupilsService.all_attributes()
+    #     for pupil in session.query(Pupils).join(Classes, Classes.id == Pupils.class_id).filter(Pupils.id == 1):
+    #         current_pupil_dict = {}
+    #         for attribute in pupil_attributes:
+    #             current_pupil_dict[attribute] = eval('pupil.' + attribute)
+    #         pupil_attributes.append(current_pupil_dict)
+    #     return pupil_attributes
+
+    # @staticmethod
+    # def capabilities():
+    #     pupils_capabilities_dict = CapabilitiesService.get_capabilities()
+    #     return pupils_capabilities_dict
+
+    # @staticmethod
+    # def capabilities_nice_name():
+    #     pupils_capabilities_nice_name = CapabilitiesService.get_capabilities(mode='nice')
+    #     return pupils_capabilities_nice_name

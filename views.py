@@ -39,11 +39,12 @@ def user_view(request):
 def edit_pupil(request):
     pupil_id = int(request.GET.get('id'))
     pupil_info = PupilsService.get_single_pupil(pupil_id)
-    capability_list = PupilsService.capabilities()
+    capability_list = CapabilitiesService.get_capabilities()
     capability_current = PupilsService.current_capabilities(pupil_id)
     classes_dict = ClassesService.get_all_classes()
+    capability_names = CapabilitiesService.get_capabilities(mode='nice')
     return {'pupil': pupil_info, 'capability_list': capability_list, 'capability_current': capability_current,
-            'classes_dict': classes_dict}
+            'classes_dict': classes_dict, 'capability_names': capability_names}
 
 
 @view_config(route_name='edit', renderer='templates/edit.jinja2',
@@ -56,16 +57,17 @@ def store_pupil(request):
     pupil_data_to_store = {}
     for attribute in PupilsService.attributes():
         pupil_data_to_store[attribute] = request.POST.get(attribute)
-    for capability in PupilsService.capabilities():
+    for capability in CapabilitiesService.get_capabilities():
         pupil_data_to_store[capability] = convert_form_boolean(request.POST.get(capability))
     PupilsService.store_pupil_data(pupil_data_to_store)
     pupil_info = PupilsService.get_single_pupil(pupil_id)
-    capability_list = PupilsService.capabilities()
+    capability_list = CapabilitiesService.get_capabilities()
     capability_current = PupilsService.current_capabilities(pupil_id)
     classes_dict = ClassesService.get_all_classes()
+    capability_names = CapabilitiesService.get_capabilities(mode='nice')
     if save:
         return {'pupil': pupil_info, 'capability_list': capability_list, 'capability_current': capability_current,
-                'classes_dict': classes_dict}
+                'classes_dict': classes_dict, 'capability_names': capability_names}
     elif save_return:
         return HTTPFound(location=request.route_url('list'))
     elif delete_pupil:
@@ -83,12 +85,14 @@ def list_pupils(request):
     if class_filter is None:
         class_filter = 'None'
     pupils_list = PupilsService.get_pupils_list(sort_order, class_filter)
-    capability_list = PupilsService.capabilities()
-    capability_dict = PupilsService.capabilities_dict()
+    capability_list = CapabilitiesService.get_capabilities()
+    capability_nice = CapabilitiesService.get_capabilities(mode='nice')
     classes_dict = ClassesService.get_all_classes()
+    capabilities_keys = CapabilitiesService.get_capabilities_keys()
+
     return {'pupils': pupils_list, 'capability_list': capability_list,
-            'capabilities_nice': capability_dict, 'classes_dict': classes_dict, 'filter': filter,
-            'class_filter': class_filter}
+            'capabilities_nice': capability_nice, 'classes_dict': classes_dict, 'filter': filter,
+            'class_filter': class_filter, 'capabilities_keys': capabilities_keys}
 
 
 @view_config(route_name='class_list_capabilities', renderer='templates/class_list_capabilities.jinja2',
@@ -230,13 +234,14 @@ def create_pupil(request):
         pupil_data_to_store = {}
         for attribute in PupilsService.attributes():
             pupil_data_to_store[attribute] = request.POST.get(attribute)
-        for capability in PupilsService.capabilities():
+        for capability in CapabilitiesService.get_capabilities():
             pupil_data_to_store[capability] = convert_form_boolean(request.POST.get(capability))
         PupilsService.create_new_pupil(pupil_data_to_store)
         return HTTPFound(location=request.route_url('list'))
-    capability_list = PupilsService.capabilities()
+    capability_keys = CapabilitiesService.get_capabilities_keys()
+    capability_names = CapabilitiesService.get_capabilities(mode='nice')
     classes_dict = ClassesService.get_all_classes()
-    return {'capability_list': capability_list, 'classes_dict': classes_dict}
+    return {'capability_keys': capability_keys, 'classes_dict': classes_dict, 'capability_names': capability_names}
 
 
 @view_config(route_name='logfile_read', renderer='templates/logfile_read.jinja2', permission='edit')
@@ -250,7 +255,7 @@ def logfile_pupil_history(request):
     pupil_id = int(request.GET.get('id'))
     logfile_contents = LoggingService.read_logfile_by_id(pupil_id)
     capability_dict = PupilsService.capabilities_dict()
-    capability_list = PupilsService.capabilities()
+    capability_list = CapabilitiesService.get_capabilities()
     return {'logfile_contents': logfile_contents, 'capabilities_nice': capability_dict,
             'capability_list': capability_list}
 

@@ -22,14 +22,14 @@ class SheetsImport:
             data_cleaned = [True if x == 'TRUE' else False for x in data_list[3:]]
 
             # check if row already imported
-            imported_cell_column = 4 + len(PupilsService.capabilities())
+            imported_cell_column = 4 + len(CapabilitiesService.get_capabilities())
             if wks.cell(current_row, imported_cell_column).value != "DONE":
 
                 # build pupil dict to send to db
                 new_pupil_dict = {}
                 for idx, attribute in enumerate(PupilsService.attributes()[1:4]):
                     new_pupil_dict[attribute] = data_list[idx]
-                for idx, capability in enumerate(PupilsService.capabilities()):
+                for idx, capability in enumerate(CapabilitiesService.get_capabilities()):
                     new_pupil_dict[capability] = data_cleaned[idx]
 
                 # send dict to db
