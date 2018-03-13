@@ -343,11 +343,11 @@ def capability_edit(request):
             active = True
         else:
             active = False
-        cap_to_store = {'id':cap_id}
+        cap_to_store = {'id': cap_id}
         for attribute in CapabilitiesService.list_all_attributes()[1:]:
-            cap_to_store[attribute]=eval(attribute)
+            cap_to_store[attribute] = eval(attribute)
         CapabilitiesService.update_capability(cap_to_store)
         return HTTPFound(location=request.route_url('capabilities_list'))
     capability_info = CapabilitiesService.get_single_capability(cap_id)
     attributes = CapabilitiesService.list_all_attributes()
-    return {'capability_info':capability_info, 'attributes': attributes}
+    return {'capability_info': capability_info, 'attributes': attributes}

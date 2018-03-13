@@ -6,8 +6,10 @@
         <h1><span class="font-semi-bold">Year Group Summary</span> :
             {% if year_filter == "None" %}
                 All Years
-            {% else %}
-                {{ year_filter }}
+            {% elif year_filter == "Foundation" %}
+                {{ year_filter }} Year
+                {% else %}
+                Year {{ year_filter }}
             {% endif %}
     </div>
 <div class="dropdown show">

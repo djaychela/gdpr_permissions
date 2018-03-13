@@ -3,11 +3,11 @@
 {% block content%}
     <div class="container">
         <div class="row">
-          <div class="col-md-10">
+          <div class="col-md-12">
             <div class="content">
                 <h1><span class="font-semi-bold">Pupil Edit for </span> {{ pupil.first_name }} {{ pupil.last_name }} - ID: {{ pupil.id }}</h1>
             <form action="" method="post">
-            <table class="table" id="myTable">
+            <table class="table-condensed table-striped col-md-12" id="myTable">
                 <thead>
                     <th scope = 'col' colspan="3">Name and Class</th>
                 </thead>
@@ -75,7 +75,7 @@
 
                     <tr>
                         <td>
-                            <a href="/admin/delete_pupil?id={{ pupil.id }}" type="submit" name="delete_pupil" value="delete_pupil" class="btn btn-danger">Delete</a>
+                            <a href="/admin/delete_pupil?id={{ pupil.id }}" class="btn btn-danger">Delete</a>
                             <a href="/admin/logfile_pupil_history?id={{ pupil.id }}" class="btn btn-secondary">History</a>
                         </td>
                         <td>

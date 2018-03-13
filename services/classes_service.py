@@ -16,7 +16,7 @@ class ClassesService():
         class_return = {}
         for classes in session.query(Classes).order_by(Classes.class_strand).all():
             class_name = classes.class_strand + ' ' + classes.class_year
-            class_return[classes.id]=class_name
+            class_return[classes.id] = class_name
         return class_return
 
     @staticmethod
@@ -35,7 +35,7 @@ class ClassesService():
         for classes in session.query(Classes).order_by(Classes.id).all():
             current_class_dict = {}
             for attribute in attributes:
-                current_class_dict[attribute]=eval('classes.'+attribute)
+                current_class_dict[attribute] = eval('classes.'+attribute)
             class_info_return.append(current_class_dict)
         return class_info_return
 

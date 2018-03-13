@@ -3,12 +3,13 @@
 {% block content%}
 <div class="content">
     <div class="content">
-        <h1><span class="font-semi-bold">Class Summary</span> :
+        <h1><span class="font-semi-bold">
             {% if class_filter == "None" %}
                 All Classes
             {% else %}
                 {{ classes_dict[class_filter|int] }}
             {% endif %}
+      </span>  - Summary View</h1>
     </div>
 <div class="dropdown show">
         <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
@@ -26,6 +27,9 @@
                 {% endif %}
             {% endfor %}
         </div>
+        {% if class_filter != "None" %}
+            <a class="btn btn-primary" href="/list?class_filter={{ class_filter }}">Detail View</a>
+        {% endif %}
     </div>
 </div>
 
