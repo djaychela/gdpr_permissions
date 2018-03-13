@@ -1,0 +1,92 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+    {% if request.authenticated_userid %}
+    <script>
+        {% for key in capabilities_keys %}
+            function toggle_{{ key }}() {
+
+            var table, td, i;
+            table = document.getElementById("myTable");
+            td = table.getElementsByClassName("div_{{ key }}");
+
+            // Loop through all table rows, and hide those who don't match the search query
+              for (i = 0; i < td.length; i++) {
+                if (td[i].parentElement.parentElement.style.display === "none") {
+                    td[i].parentElement.parentElement.style.display = "";
+                  } else {
+                    td[i].parentElement.parentElement.style.display = "none";
+                  }
+                }
+              }
+
+
+        {% endfor %}
+    </script>
+
+    <div class="content">
+        <h1><span class="font-semi-bold">
+            {% if group_filter == "None" %}
+            All Groups
+            {% else %}
+            {{ groups_dict[group_filter|int] }}
+            {% endif %}
+    </span>- Detail View </h1>
+    </div>
+    <div class="dropdown show">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+            Pick a Group
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="?group_filter=None">All Groups</a>
+            {% for group in groups_dict %}
+                {% if group == group_filter|int %}
+                    <a class="dropdown-item active" href="?group_filter={{ group }}">{{ groups_dict[group] }}</a>
+                {% else %}
+                    <a class="dropdown-item" href="?group_filter={{ group }}">{{ groups_dict[group] }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% if class_filter != "None" %}
+            <a class="btn btn-primary" href="/groups_view_summary?group_filter={{ group_filter }}">Summary View</a>
+        {% endif %}
+    </div>
+
+    <table class="table" id="myTable">
+        <thead>
+
+            <th><a class="badge badge-info" id="button_clear" href="?group_filter={{ group_filter }}">Clear</a></th>
+            {% for key in capabilities_keys %}
+                <th><span class="badge badge-success" data-toggle="button" onclick="toggle_{{ key }}()">{{ capabilities_nice[key] }}</span></th>
+            {% endfor %}
+        </thead>
+        <tbody>
+        {% for pupil in pupil_capability_dict %}
+            <tr class="hideable">
+                <td>
+                    {% if request.authenticated_userid == 'admin' %}
+                    <a href="admin/edit?id={{ pupil.id }}">{{ pupil.first_name }} {{ pupil.last_name }}</a>
+                    {%  else %}
+                    {{ pupil.first_name }} {{ pupil.last_name }}
+                    {% endif %}
+                </td>
+                {% for capability in capabilities_keys %}
+                    <td align="center">
+                        {% if pupil[capability] %}
+                            <img src="{{ request.static_url('gdpr_permissions:static/tick.png') }}" width="25">
+                        {% else %}
+                            <img class="div_{{ capability }}" src="{{ request.static_url('gdpr_permissions:static/cross.png') }}" width="25">
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <input type="hidden" name="group_filter" value="{{ group_filter }}">
+    {% else %}
+    <p>You will need to <a href="/signin">sign in</a> to view or edit any records.</p>
+    {% endif %}
+{% endblock content %}

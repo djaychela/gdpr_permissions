@@ -62,14 +62,15 @@
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">Summaries</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="nav-link" href="/class_list_capabilities?class_filter=None">Class</a>
+                        <a class="nav-link" href="/class_summary_view?class_filter=None">Class</a>
                         <a class="nav-link" href="/class_list_year_capabilities?year_filter=None">Year</a>
+                        <a class="nav-link" href="/groups_view_summary?year_filter=None">Groups</a>
                     </div>
                 </li>
             {% endif %}
         {% if request.authenticated_userid %}
           <li class="nav-item">
-            <a class="nav-link" href="/list?class_filter=None">Detail</a>
+            <a class="nav-link" href="/class_detail_view?class_filter=None">Detail</a>
           </li>
         {% endif %}
             {% if request.authenticated_userid == 'admin' %}
@@ -83,6 +84,8 @@
                         <a class="nav-link" href="/admin/year_group_update_1">Year Group Update</a>
                         <div class="dropdown-divider"></div>
                         <a class="nav-link" href="/admin/classes_list">Classes</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="nav-link" href="/admin/groups_list">Groups</a>
                         <div class="dropdown-divider"></div>
                         <a class="nav-link" href="/admin/users">Users</a>
                         <div class="dropdown-divider"></div>

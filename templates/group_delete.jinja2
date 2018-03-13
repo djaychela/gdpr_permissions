@@ -1,0 +1,16 @@
+{% extends 'layout.jinja2' %}
+
+{% block content %}
+    <div class="content">
+    <h1><span class="font-semi-bold">Delete Group</span></h1>
+    </div>
+    <p>Are you sure you want to delete group {{ group_id }}?</p>
+    <p><strong>This CANNOT be undone.</strong></p>
+    <form>
+
+    <button type="submit" class="btn btn-danger" name="confirm" value="confirm">Delete</button>
+    <button type="submit" class="btn btn-secondary" name="cancel" value="cancel">Cancel</button>
+    <input type="hidden" name="group_id" value="{{ group_id }}">
+
+    </form>
+{% endblock content %}

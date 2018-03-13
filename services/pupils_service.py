@@ -27,19 +27,18 @@ class PupilsService:
         return pupil_return
 
     @staticmethod
-    def get_pupils_list(sort_order, class_filter):
+    def get_pupils_list(class_filter):
         session = DbSessionFactory.create_session()
         pupil_attributes = PupilsService.all_attributes()
         pupil_output_list = []
         if class_filter is None or class_filter == "None":
             for pupil in session.query(Pupils) \
-                    .order_by(eval('Pupils.' + sort_order)).all():
+                    .order_by(Pupils.last_name.asc()).all():
                 current_pupil_dict = {}
                 for attribute in pupil_attributes:
                     current_pupil_dict[attribute] = eval('pupil.' + attribute)
                 pupil_output_list.append(current_pupil_dict)
         else:
-            # .order_by(eval('Pupils.' + sort_order))
             for pupil in session.query(Pupils).filter(Pupils.class_id == class_filter) \
                     .all():
                 current_pupil_dict = {}
@@ -52,6 +51,7 @@ class PupilsService:
     def get_single_pupil(id):
         session = DbSessionFactory.create_session()
         pupil_attributes = PupilsService.all_attributes()
+        pupil_attributes['groups'] = 'groups'
         pupil = session.query(Pupils).get(id)
         current_pupil_dict = {}
         for attribute in pupil_attributes:
@@ -84,8 +84,10 @@ class PupilsService:
         LoggingService.add_entry(data_to_store, 'pupil', 'edit')
         session = DbSessionFactory.create_session()
         pupil_to_edit = session.query(Pupils).get(data_to_store['id'])
+        keys_to_store_as_text=PupilsService.attributes()
+        keys_to_store_as_text['groups']='groups'
         for key, value in data_to_store.items():
-            if key in PupilsService.attributes():
+            if key in keys_to_store_as_text:
                 exec("pupil_to_edit." + key + "='" + str(value) + "'")
             else:
                 exec("pupil_to_edit." + key + "=" + str(value))
@@ -110,8 +112,6 @@ class PupilsService:
             pupil.overview = 'check'
         session.commit()
         return
-
-
 
     @staticmethod
     def get_pupils_overview(class_filter):
@@ -211,6 +211,50 @@ class PupilsService:
             LoggingService.add_entry(pupil_log, 'pupil', 'move')
         session.commit()
         return
+
+    @staticmethod
+    def get_pupils_with_groups(group_filter):
+        session = DbSessionFactory.create_session()
+        pupil_attributes = PupilsService.all_attributes()
+        pupil_attributes['groups'] = 'groups'
+        pupil_output_list = []
+        if group_filter == "None":
+            for pupil in session.query(Pupils).filter(Pupils.groups != None):
+                current_pupil_dict = {}
+                for attribute in pupil_attributes.keys():
+                    current_pupil_dict[attribute] = eval('pupil.' + str(attribute))
+                pupil_output_list.append(current_pupil_dict)
+        else:
+            for pupil in session.query(Pupils).filter(Pupils.groups != None):
+                current_pupil_dict = {}
+                for attribute in pupil_attributes.keys():
+                    current_pupil_dict[attribute] = eval('pupil.' + str(attribute))
+                if str(group_filter) in pupil.groups:
+                    pupil_output_list.append(current_pupil_dict)
+        return pupil_output_list
+
+    @staticmethod
+    def get_pupils_with_groups_overview(group_filter):
+        session = DbSessionFactory.create_session()
+        pupil_overview_dict = {}
+        overview_info = ['ok', 'check', 'none']
+        if group_filter == "None":
+            for overview in overview_info:
+                current_pupils_list = []
+                for pupil in session.query(Pupils).filter(Pupils.overview == overview) \
+                        .filter(Pupils.groups != None).order_by(Pupils.last_name):
+                    current_pupils_list.append(pupil.first_name + " " + pupil.last_name.upper())
+                pupil_overview_dict[overview] = current_pupils_list
+        else:
+            for overview in overview_info:
+                current_pupils_list = []
+                for pupil in session.query(Pupils) \
+                        .filter(Pupils.overview == overview).filter(Pupils.groups != None) \
+                        .order_by(Pupils.last_name):
+                    if str(group_filter) in pupil.groups:
+                        current_pupils_list.append(pupil.first_name + " " + pupil.last_name.upper())
+                pupil_overview_dict[overview] = current_pupils_list
+        return pupil_overview_dict
 
     # @staticmethod
     # def get_number_of_pupils():

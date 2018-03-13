@@ -24,6 +24,7 @@ class Pupils(Base):
     class_id = Column(Integer, ForeignKey('classes.id'))
     class_info = relationship('Classes')
     overview = Column(Enum('ok','check','none'))
+    groups = Column(String)
     c1 = Column(Boolean, default=False)
     c2 = Column(Boolean, default=False)
     c3 = Column(Boolean, default=False)

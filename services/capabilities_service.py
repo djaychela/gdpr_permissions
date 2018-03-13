@@ -12,7 +12,8 @@ class CapabilitiesService():
         session = DbSessionFactory.create_session()
         capability_keys_list = []
         for capability_key in session.query(Capabilities).order_by('id'):
-            capability_keys_list.append('c' + str(capability_key.id))
+            if capability_key.active:
+                capability_keys_list.append('c' + str(capability_key.id))
         return capability_keys_list
 
     @staticmethod

@@ -8,6 +8,7 @@ from gdpr_permissions.services.accounts_service import AccountsService
 from gdpr_permissions.services.capabilities_service import CapabilitiesService
 from gdpr_permissions.services.sheets_import import SheetsImport
 from gdpr_permissions.services.logging_service import LoggingService
+from gdpr_permissions.services.groups_service import GroupsService
 import threading
 
 
@@ -59,6 +60,8 @@ def store_pupil(request):
         pupil_data_to_store[attribute] = request.POST.get(attribute)
     for capability in CapabilitiesService.get_capabilities():
         pupil_data_to_store[capability] = convert_form_boolean(request.POST.get(capability))
+    print(str(request.POST.get('groups')))
+    pupil_data_to_store['groups'] = str(request.POST.get('groups'))
     PupilsService.store_pupil_data(pupil_data_to_store)
     pupil_info = PupilsService.get_single_pupil(pupil_id)
     capability_list = CapabilitiesService.get_capabilities()
@@ -69,33 +72,27 @@ def store_pupil(request):
         return {'pupil': pupil_info, 'capability_list': capability_list, 'capability_current': capability_current,
                 'classes_dict': classes_dict, 'capability_names': capability_names}
     elif save_return:
-        return HTTPFound(location=request.route_url('list'))
+        return HTTPFound(location=request.route_url('class_view_detail'))
     elif delete_pupil:
         return HTTPFound(location=request.route_url('delete_pupil'))
 
 
-@view_config(route_name='list', renderer='templates/list.jinja2', permission='view')
+@view_config(route_name='class_view_detail', renderer='templates/class_view_detail.jinja2', permission='view')
 def list_pupils(request):
-    sort_order = request.GET.get('sort')
-    if sort_order is None or sort_order == 'last_name':
-        sort_order = 'last_name.asc()'
-    else:
-        sort_order += '.desc()'
     class_filter = request.GET.get('class_filter')
     if class_filter is None:
         class_filter = 'None'
-    pupils_list = PupilsService.get_pupils_list(sort_order, class_filter)
+    pupils_list = PupilsService.get_pupils_list(class_filter)
     capability_list = CapabilitiesService.get_capabilities()
     capability_nice = CapabilitiesService.get_capabilities(mode='nice')
     classes_dict = ClassesService.get_all_classes()
     capabilities_keys = CapabilitiesService.get_capabilities_keys()
-
     return {'pupils': pupils_list, 'capability_list': capability_list,
             'capabilities_nice': capability_nice, 'classes_dict': classes_dict, 'filter': filter,
             'class_filter': class_filter, 'capabilities_keys': capabilities_keys}
 
 
-@view_config(route_name='class_list_capabilities', renderer='templates/class_list_capabilities.jinja2',
+@view_config(route_name='class_summary_view', renderer='templates/class_summary_view.jinja2',
              permission='view')
 def class_list_capabilities(request):
     class_filter = request.GET.get('class_filter')
@@ -356,3 +353,88 @@ def capability_edit(request):
     capability_info = CapabilitiesService.get_single_capability(cap_id)
     attributes = CapabilitiesService.list_all_attributes()
     return {'capability_info': capability_info, 'attributes': attributes}
+
+
+@view_config(route_name='groups_list', renderer='templates/groups_list.jinja2', permission='edit')
+def groups_list(request):
+    group_attr_list = GroupsService.list_all_attributes()
+    groups_list = GroupsService.get_all_groups()
+    return {'group_attr_list': group_attr_list, 'groups_list': groups_list}
+
+
+@view_config(route_name='group_edit', renderer='templates/group_edit.jinja2', permission='edit')
+def group_edit(request):
+    cancel = request.GET.get('cancel')
+    submit = request.GET.get('submit')
+    group_id = request.GET.get('group_id')
+    attributes = GroupsService.list_all_attributes()
+    if cancel:
+        return HTTPFound(location=request.route_url('groups_list'))
+    if submit:
+        group_name = request.GET.get('group_name')
+        group_desc = request.GET.get('group_desc')
+        group_to_store={}
+        group_to_store['id'] = group_id
+        for attribute in attributes[1:]:
+            group_to_store[attribute] = eval(attribute)
+        GroupsService.store_group_info(group_to_store)
+        return HTTPFound(location=request.route_url('groups_list'))
+    group_info = GroupsService.get_single_group_info(group_id)
+    return {'group_info': group_info, 'attributes': attributes}
+
+
+@view_config(route_name='group_delete', renderer='templates/group_delete.jinja2', permission='edit')
+def group_delete(request):
+    cancel = request.GET.get('cancel')
+    confirm = request.GET.get('confirm')
+    group_id = request.GET.get('group_id')
+    if cancel:
+        return HTTPFound(location=request.route_url('groups_list'))
+    if confirm:
+        GroupsService.delete_group(group_id)
+        return HTTPFound(location=request.route_url('groups_list'))
+    return {'group_id': group_id}
+
+
+@view_config(route_name='group_create', renderer='templates/group_create.jinja2', permission='edit')
+def group_create(request):
+    cancel = request.GET.get('cancel')
+    submit = request.GET.get('submit')
+    attributes = GroupsService.list_all_attributes()
+    if cancel:
+        return HTTPFound(location=request.route_url('groups_list'))
+    if submit:
+        group_name = request.GET.get('group_name')
+        group_desc = request.GET.get('group_desc')
+        group_to_create = {}
+        for attribute in attributes[1:]:
+            group_to_create[attribute] = eval(attribute)
+        print(group_to_create)
+        GroupsService.create_new_group(group_to_create)
+        return HTTPFound(location=request.route_url('groups_list'))
+    return {'attributes': attributes}
+
+
+@view_config(route_name='groups_view_summary', renderer='templates/groups_view_summary.jinja2', permission='edit')
+def groups_view_summary(request):
+    group_filter = request.GET.get('group_filter')
+    if group_filter is None:
+        group_filter = 'None'
+    groups_dict = GroupsService.get_group_names()
+    group_capability_dict = PupilsService.get_pupils_with_groups_overview(group_filter)
+    return {'groups_dict': groups_dict, 'group_capability_dict': group_capability_dict, 'group_filter': group_filter}
+
+
+@view_config(route_name='groups_view_detail', renderer='templates/groups_view_detail.jinja2', permission='edit')
+def groups_view_detail(request):
+    group_filter = request.GET.get('group_filter')
+    if group_filter is None:
+        group_filter = 'None'
+    groups_dict = GroupsService.get_group_names()
+    pupil_capability_dict = PupilsService.get_pupils_with_groups(group_filter)
+    capabilities_keys = CapabilitiesService.get_capabilities_keys()
+    for pupil in pupil_capability_dict:
+        print(pupil)
+    capability_nice = CapabilitiesService.get_capabilities(mode='nice')
+    return {'groups_dict': groups_dict, 'pupil_capability_dict': pupil_capability_dict, 'group_filter': group_filter,
+            'capabilities_keys': capabilities_keys, 'capabilities_nice': capability_nice,}

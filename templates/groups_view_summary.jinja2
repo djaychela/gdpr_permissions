@@ -4,37 +4,37 @@
 <div class="content">
     <div class="content">
         <h1><span class="font-semi-bold">
-            {% if class_filter == "None" %}
-                All Classes
+            {% if group_filter == "None" %}
+                All Groups
             {% else %}
-                {{ classes_dict[class_filter|int] }}
+                {{ groups_dict[group_filter|int] }}
             {% endif %}
       </span>  - Summary View</h1>
     </div>
 <div class="dropdown show">
         <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false">
-            Pick a Class
+            Pick a Group
         </a>
 
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="?class_filter=None">All Classes</a>
-            {% for class_entry in classes_dict %}
-                {% if class_entry == class_filter|int %}
-                    <a class="dropdown-item active" href="?class_filter={{ class_entry }}">{{ classes_dict[class_entry] }}</a>
+            <a class="dropdown-item" href="?group_filter=None">All Groups</a>
+            {% for group in groups_dict %}
+                {% if group == group_filter|int %}
+                    <a class="dropdown-item active" href="?group_filter={{ group }}">{{ groups_dict[group] }}</a>
                 {% else %}
-                    <a class="dropdown-item" href="?class_filter={{ class_entry }}">{{ classes_dict[class_entry] }}</a>
+                    <a class="dropdown-item" href="?group_filter={{ group }}">{{ groups_dict[group] }}</a>
                 {% endif %}
             {% endfor %}
         </div>
         {% if class_filter != "None" %}
-            <a class="btn btn-primary" href="/list?class_filter={{ class_filter }}">Detail View</a>
+            <a class="btn btn-primary" href="/groups_view_detail?group_filter={{ group_filter }}">Detail View</a>
         {% endif %}
     </div>
 </div>
 
     <div>
-    {% for capability in class_capability_dict %}
+    {% for capability in group_capability_dict %}
         <hr>
             {%  if capability == 'ok' %}
                 <img src="{{ request.static_url('gdpr_permissions:static/tick.png') }}" width="50">
@@ -43,15 +43,15 @@
             {% else %}
                 <img src="{{ request.static_url('gdpr_permissions:static/cross.png') }}" width="50">
             {% endif %}
-        {% if class_capability_dict[capability]|length == 0 %}
+        {% if group_capability_dict[capability]|length == 0 %}
             No Pupils
         {% else %}
-            {% for pupil_name in class_capability_dict[capability] %}
+            {% for pupil_name in group_capability_dict[capability] %}
                 {{ pupil_name }}
             {% endfor %}
         {% endif %}
     {% endfor %}
-    <input type="hidden" name="class_filter" value="{{ class_filter }}">
+    <input type="hidden" name="group_filter" value="{{ group_filter }}">
     </div>
 
 {% endblock content %}
