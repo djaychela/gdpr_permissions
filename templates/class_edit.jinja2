@@ -15,6 +15,19 @@
                     <td>{{ attribute }}</td>
                        {%  if attribute == 'id' %}
                             <td>{{ class_info[attribute] }}</td>
+                       {% elif attribute == 'active' %}
+                            <td>
+                                <div class="onoffswitch">
+                                        <input type="checkbox" name="{{ attribute }}" class="onoffswitch-checkbox" value ='No' \
+                                               id="{{ attribute }}" {% if class_info[attribute] %}>
+                                                {% else %}checked>
+                                                {% endif %}
+                                            <label class="onoffswitch-label" for="{{ attribute }}">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                    </div>
+                            </td>
                        {% else %}
                             <td><input type="text" name="{{ attribute }}" value="{{ class_info[attribute] }}"></td>
                        {% endif %}

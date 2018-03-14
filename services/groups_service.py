@@ -1,5 +1,6 @@
 from gdpr_permissions.data.groups import Groups
 from gdpr_permissions.data.dbsession import DbSessionFactory
+from gdpr_permissions.services.logging_service import LoggingService
 
 
 class GroupsService():
@@ -44,6 +45,7 @@ class GroupsService():
         for attribute in attributes:
             exec("group_to_be_stored." + attribute + "='" + group_to_store[attribute] + "'")
         session.commit()
+        LoggingService.add_entry(group_to_store, 'group', 'store')
         return
 
     @staticmethod
@@ -51,6 +53,8 @@ class GroupsService():
         session = DbSessionFactory.create_session()
         session.query(Groups).filter(Groups.id == group_id).delete()
         session.commit()
+        deleted_group = {'id': group_id}
+        LoggingService.add_entry(deleted_group, 'group', 'delete')
         return
 
     @staticmethod
@@ -61,5 +65,6 @@ class GroupsService():
             exec("group_to_store." + key + "='" + group_info[key] + "'")
         session.add(group_to_store)
         session.commit()
+        LoggingService.add_entry(group_info, 'group', 'create')
         return
 

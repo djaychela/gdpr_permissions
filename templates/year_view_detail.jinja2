@@ -26,31 +26,33 @@
 
     <div class="content">
         <h1><span class="font-semi-bold">
-            {% if class_filter == "None" %}
-            All Classes
+            {% if year_filter == "None" %}
+            All Years
+            {% elif year_filter == "Foundation" %}
+                {{ year_group_list[(year_filter|int -1)] }} Year
             {% else %}
-            {{ classes_dict[class_filter|int] }}
+            Year {{ year_group_list[(year_filter|int -1)] }}
             {% endif %}
     </span>- Detail View </h1>
     </div>
     <div class="dropdown show">
         <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false">
-            Pick a Class
+            Pick a Year
         </a>
 
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="?class_filter=None">All Classes</a>
-            {% for class_entry in classes_dict %}
-                {% if class_entry == class_filter|int %}
-                    <a class="dropdown-item active" href="?class_filter={{ class_entry }}">{{ classes_dict[class_entry] }}</a>
+            <a class="dropdown-item" href="?year_filter=None">All Years</a>
+            {% for year_entry in year_group_list %}
+                {% if class_entry == year_filter %}
+                    <a class="dropdown-item active" href="?year_filter={{ class_entry }}">{{ classes_dict[class_entry] }}</a>
                 {% else %}
-                    <a class="dropdown-item" href="?class_filter={{ class_entry }}">{{ classes_dict[class_entry] }}</a>
+                    <a class="dropdown-item" href="?year_filter={{ year_entry }}">{{ year_entry }}</a>
                 {% endif %}
             {% endfor %}
         </div>
     {% if class_filter != "None" %}
-            <a class="btn btn-primary" href="/class_view_summary?class_filter={{ class_filter }}">Summary View</a>
+            <a class="btn btn-primary" href="/year_view_summary?year_filter={{ year_filter }}">Summary View</a>
         {% endif %}
     </div>
 

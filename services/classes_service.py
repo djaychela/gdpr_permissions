@@ -15,8 +15,9 @@ class ClassesService():
         session = DbSessionFactory.create_session()
         class_return = {}
         for classes in session.query(Classes).order_by(Classes.class_strand).all():
-            class_name = classes.class_strand + ' ' + classes.class_year
-            class_return[classes.id] = class_name
+            if classes.active:
+                class_name = classes.class_strand + ' ' + classes.class_year
+                class_return[classes.id] = class_name
         return class_return
 
     @staticmethod
@@ -55,7 +56,10 @@ class ClassesService():
         session = DbSessionFactory.create_session()
         class_to_store = session.query(Classes).get(class_info['id'])
         for attribute in attributes[1:]:
-            exec("class_to_store." + attribute + "='" + class_info[attribute] + "'")
+            if attribute != 'active':
+                exec("class_to_store." + attribute + "='" + class_info[attribute] + "'")
+            else:
+                exec("class_to_store." + attribute + "=" + str(class_info[attribute]))
         session.commit()
         LoggingService.add_entry(class_info, 'class','edit')
         return
@@ -65,7 +69,10 @@ class ClassesService():
         session = DbSessionFactory.create_session()
         class_to_store = Classes()
         for key in class_info.keys():
-            exec("class_to_store." + key + "='" + class_info[key] + "'")
+            if key != 'active':
+                exec("class_to_store." + key + "='" + class_info[key] + "'")
+            else:
+                exec("class_to_store." + key + "=" + str(class_info[key]))
         session.add(class_to_store)
         session.commit()
         LoggingService.add_entry(class_info, 'class', 'create')

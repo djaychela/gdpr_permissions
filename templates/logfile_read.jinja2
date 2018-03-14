@@ -8,7 +8,11 @@
     <h2>Users:</h2>
     <textarea rows="8" cols="80">{% for log_entry in logfile_contents %}{% if log_entry.entrytype == 'user' %}{{ log_entry.date }} {{ log_entry.username }} {{ log_entry.action }}&#013;&#010;{% endif %}{% endfor %} </textarea>
     <h2>Classes:</h2>
-    <textarea rows="8" cols="80">{% for log_entry in logfile_contents %}{% if log_entry.entrytype == 'class' %}{{ log_entry.date }} {{ log_entry.class_strand }} {{ log_entry.class_year }} {{ log_entry.class_teacher }}&#013;&#010;{% endif %}{% endfor %} </textarea>
+    <textarea rows="8" cols="80">{% for log_entry in logfile_contents %}{% if log_entry.entrytype == 'class' %}{{ log_entry.date }} {{ log_entry.action }} {{ log_entry.id }} {{ log_entry.class_strand }} {{ log_entry.class_year }} {{ log_entry.class_teacher }} {{ log_entry.active }}&#013;&#010;{% endif %}{% endfor %} </textarea>
+    <h2>Groups:</h2>
+    <textarea rows="8" cols="80">{% for log_entry in logfile_contents %}{% if log_entry.entrytype == 'group' %}{{ log_entry.date }} {{ log_entry.action }} {{ log_entry.id }} {{ log_entry.group_name}} {{ log_entry.group_desc }}&#013;&#010;{% endif %}{% endfor %} </textarea>
+    <h2>Capabilities:</h2>
+    <textarea rows="8" cols="80">{% for log_entry in logfile_contents %}{% if log_entry.entrytype == 'capability' %}{{ log_entry.date }} {{ log_entry.action }} {{ log_entry.id }} {{ log_entry.capability }} {{ log_entry.capability_nice }} {{ log_entry.active }}&#013;&#010;{% endif %}{% endfor %} </textarea>
 </div>
 
 {% endblock content %}

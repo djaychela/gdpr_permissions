@@ -11,3 +11,4 @@ class Classes(Base):
     class_strand = Column(String)
     class_year = Column(String)
     class_teacher = Column(String)
+    active = Column(Boolean)

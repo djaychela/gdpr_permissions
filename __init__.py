@@ -38,8 +38,9 @@ def main(global_config, **settings):
 
     # user pages
     config.add_route('class_view_detail', '/class_view_detail')
-    config.add_route('class_summary_view', '/class_summary_view')
-    config.add_route('class_list_year_capabilities', '/class_list_year_capabilities')
+    config.add_route('class_view_summary', '/class_view_summary')
+    config.add_route('year_view_summary', '/year_view_summary')
+    config.add_route('year_view_detail', '/year_view_detail')
     config.add_route('groups_view_summary', '/groups_view_summary')
     config.add_route('groups_view_detail', '/groups_view_detail')
 
@@ -66,7 +67,6 @@ def main(global_config, **settings):
     config.add_route('group_edit', '/admin/group_edit')
     config.add_route('group_delete', '/admin/group_delete')
     config.add_route('group_create', '/admin/group_create')
-
 
     # sign in pages
     config.add_route('auth', '/sign/{action}')

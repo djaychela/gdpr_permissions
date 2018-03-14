@@ -1,6 +1,5 @@
 from gdpr_permissions.data.dbsession import DbSessionFactory
 from gdpr_permissions.data.pupil import Pupils
-from gdpr_permissions.data.classes import Classes
 from gdpr_permissions.services.capabilities_service import CapabilitiesService
 from gdpr_permissions.services.logging_service import LoggingService
 from gdpr_permissions.config import config
@@ -41,6 +40,27 @@ class PupilsService:
         else:
             for pupil in session.query(Pupils).filter(Pupils.class_id == class_filter) \
                     .all():
+                current_pupil_dict = {}
+                for attribute in pupil_attributes.keys():
+                    current_pupil_dict[attribute] = eval('pupil.' + str(attribute))
+                pupil_output_list.append(current_pupil_dict)
+        return pupil_output_list
+
+    @staticmethod
+    def get_year_group_list(year_filter):
+        session = DbSessionFactory.create_session()
+        pupil_attributes = PupilsService.all_attributes()
+        pupil_output_list = []
+        if year_filter is None or year_filter == "None":
+            for pupil in session.query(Pupils) \
+                    .order_by(Pupils.last_name.asc()).all():
+                current_pupil_dict = {}
+                for attribute in pupil_attributes:
+                    current_pupil_dict[attribute] = eval('pupil.' + attribute)
+                pupil_output_list.append(current_pupil_dict)
+        else:
+            for pupil in session.query(Pupils).join(Pupils.class_info)\
+                    .filter(Pupils.class_info.property.mapper.class_.class_year == year_filter).all():
                 current_pupil_dict = {}
                 for attribute in pupil_attributes.keys():
                     current_pupil_dict[attribute] = eval('pupil.' + str(attribute))
@@ -219,13 +239,13 @@ class PupilsService:
         pupil_attributes['groups'] = 'groups'
         pupil_output_list = []
         if group_filter == "None":
-            for pupil in session.query(Pupils).filter(Pupils.groups != None):
+            for pupil in session.query(Pupils).filter(Pupils.groups != ''):
                 current_pupil_dict = {}
                 for attribute in pupil_attributes.keys():
                     current_pupil_dict[attribute] = eval('pupil.' + str(attribute))
                 pupil_output_list.append(current_pupil_dict)
         else:
-            for pupil in session.query(Pupils).filter(Pupils.groups != None):
+            for pupil in session.query(Pupils).filter(Pupils.groups != ''):
                 current_pupil_dict = {}
                 for attribute in pupil_attributes.keys():
                     current_pupil_dict[attribute] = eval('pupil.' + str(attribute))
@@ -242,44 +262,16 @@ class PupilsService:
             for overview in overview_info:
                 current_pupils_list = []
                 for pupil in session.query(Pupils).filter(Pupils.overview == overview) \
-                        .filter(Pupils.groups != None).order_by(Pupils.last_name):
+                        .filter(Pupils.groups != '').order_by(Pupils.last_name):
                     current_pupils_list.append(pupil.first_name + " " + pupil.last_name.upper())
                 pupil_overview_dict[overview] = current_pupils_list
         else:
             for overview in overview_info:
                 current_pupils_list = []
                 for pupil in session.query(Pupils) \
-                        .filter(Pupils.overview == overview).filter(Pupils.groups != None) \
+                        .filter(Pupils.overview == overview).filter(Pupils.groups != '') \
                         .order_by(Pupils.last_name):
                     if str(group_filter) in pupil.groups:
                         current_pupils_list.append(pupil.first_name + " " + pupil.last_name.upper())
                 pupil_overview_dict[overview] = current_pupils_list
         return pupil_overview_dict
-
-    # @staticmethod
-    # def get_number_of_pupils():
-    #     session = DbSessionFactory.create_session()
-    #     number_of_rows = session.query(Pupils).count()
-    #     return number_of_rows
-
-
-    # @staticmethod
-    # def pupil_join_query():
-    #     session = DbSessionFactory.create_session()
-    #     pupil_attributes = PupilsService.all_attributes()
-    #     for pupil in session.query(Pupils).join(Classes, Classes.id == Pupils.class_id).filter(Pupils.id == 1):
-    #         current_pupil_dict = {}
-    #         for attribute in pupil_attributes:
-    #             current_pupil_dict[attribute] = eval('pupil.' + attribute)
-    #         pupil_attributes.append(current_pupil_dict)
-    #     return pupil_attributes
-
-    # @staticmethod
-    # def capabilities():
-    #     pupils_capabilities_dict = CapabilitiesService.get_capabilities()
-    #     return pupils_capabilities_dict
-
-    # @staticmethod
-    # def capabilities_nice_name():
-    #     pupils_capabilities_nice_name = CapabilitiesService.get_capabilities(mode='nice')
-    #     return pupils_capabilities_nice_name

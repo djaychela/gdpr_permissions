@@ -60,8 +60,10 @@ def store_pupil(request):
         pupil_data_to_store[attribute] = request.POST.get(attribute)
     for capability in CapabilitiesService.get_capabilities():
         pupil_data_to_store[capability] = convert_form_boolean(request.POST.get(capability))
-    print(str(request.POST.get('groups')))
-    pupil_data_to_store['groups'] = str(request.POST.get('groups'))
+    groups_to_store = request.POST.get('groups')
+    if groups_to_store == 'None' or groups_to_store == '':
+        groups_to_store = ''
+    pupil_data_to_store['groups'] = groups_to_store
     PupilsService.store_pupil_data(pupil_data_to_store)
     pupil_info = PupilsService.get_single_pupil(pupil_id)
     capability_list = CapabilitiesService.get_capabilities()
@@ -92,7 +94,7 @@ def list_pupils(request):
             'class_filter': class_filter, 'capabilities_keys': capabilities_keys}
 
 
-@view_config(route_name='class_summary_view', renderer='templates/class_summary_view.jinja2',
+@view_config(route_name='class_view_summary', renderer='templates/class_view_summary.jinja2',
              permission='view')
 def class_list_capabilities(request):
     class_filter = request.GET.get('class_filter')
@@ -101,9 +103,9 @@ def class_list_capabilities(request):
     return {'classes_dict': classes_dict, 'class_filter': class_filter, 'class_capability_dict': class_capability_dict}
 
 
-@view_config(route_name='class_list_year_capabilities', renderer='templates/class_list_year_capabilities.jinja2',
+@view_config(route_name='year_view_summary', renderer='templates/year_view_summary.jinja2',
              permission='view')
-def class_list_year_capabilities(request):
+def year_view_summary(request):
     year_filter = request.GET.get('year_filter')
     year_group_list = ClassesService.get_all_year_groups()
     year_group_list = set(year_group_list)
@@ -111,6 +113,23 @@ def class_list_year_capabilities(request):
     year_capability_dict = PupilsService.get_pupils_year_overview(year_filter)
     return {'year_group_list': year_group_list, 'year_filter': year_filter,
             'year_capability_dict': year_capability_dict}
+
+
+@view_config(route_name='year_view_detail', renderer='templates/year_view_detail.jinja2', permission='view')
+def year_view_detail(request):
+    year_filter = request.GET.get('year_filter')
+    if year_filter is None:
+        year_filter = 'None'
+    year_group_list = ClassesService.get_all_year_groups()
+    year_group_list = set(year_group_list)
+    year_group_list = sorted(year_group_list)
+    pupils_list = PupilsService.get_year_group_list(year_filter)
+    capability_list = CapabilitiesService.get_capabilities()
+    capability_nice = CapabilitiesService.get_capabilities(mode='nice')
+    capabilities_keys = CapabilitiesService.get_capabilities_keys()
+    return {'pupils': pupils_list, 'capability_list': capability_list,
+            'capabilities_nice': capability_nice, 'year_group_list': year_group_list, 'filter': filter,
+            'year_filter': year_filter, 'capabilities_keys': capabilities_keys}
 
 
 @view_config(route_name='import_from_sheets', renderer='templates/import_from_sheets.jinja2', permission='edit')
@@ -260,7 +279,7 @@ def logfile_pupil_history(request):
 @view_config(route_name='classes_list', renderer='templates/classes_list.jinja2', permission='edit')
 def classes_list(request):
     all_class_info = ClassesService.get_all_class_info()
-    attributes = ['id', 'class_strand', 'class_year', 'class_teacher']
+    attributes = ClassesService.attributes()
     return {'all_class_info': all_class_info, 'attributes': attributes}
 
 
@@ -276,9 +295,16 @@ def class_edit(request):
         class_strand = request.GET.get('class_strand')
         class_year = request.GET.get('class_year')
         class_teacher = request.GET.get('class_teacher')
+        active = request.GET.get('active')
+        if active is None:
+            active = True
+        else:
+            active = False
         class_to_store = {'id': class_id}
-        for attribute in attributes[1:]:
+        class_to_store['active'] = active
+        for attribute in attributes[1:-1]:
             class_to_store[attribute] = eval(attribute)
+        print(class_to_store)
         ClassesService.store_single_class_info(class_to_store)
         return HTTPFound(location=request.route_url('classes_list'))
     class_info = ClassesService.get_single_class_info(class_id)
@@ -296,8 +322,13 @@ def class_create(request):
         class_strand = request.GET.get('class_strand')
         class_year = request.GET.get('class_year')
         class_teacher = request.GET.get('class_teacher')
-        class_to_store = {}
-        for attribute in attributes:
+        active = request.GET.get('active')
+        if active is None:
+            active = True
+        else:
+            active = False
+        class_to_store = {'active':active}
+        for attribute in attributes[:-1]:
             class_to_store[attribute] = eval(attribute)
         ClassesService.create_new_class(class_to_store)
         return HTTPFound(location=request.route_url('classes_list'))
@@ -319,7 +350,7 @@ def class_delete(request):
         return HTTPFound(location=request.route_url('classes_list'))
     classes_dict = ClassesService.get_all_classes()
     class_info = ClassesService.get_single_class_info(class_id)
-    del classes_dict[int(class_id)]
+    # del classes_dict[int(class_id)]
     return {'class_id': class_id, 'class_info': class_info, 'classes_dict': classes_dict}
 
 
@@ -409,13 +440,12 @@ def group_create(request):
         group_to_create = {}
         for attribute in attributes[1:]:
             group_to_create[attribute] = eval(attribute)
-        print(group_to_create)
         GroupsService.create_new_group(group_to_create)
         return HTTPFound(location=request.route_url('groups_list'))
     return {'attributes': attributes}
 
 
-@view_config(route_name='groups_view_summary', renderer='templates/groups_view_summary.jinja2', permission='edit')
+@view_config(route_name='groups_view_summary', renderer='templates/groups_view_summary.jinja2', permission='view')
 def groups_view_summary(request):
     group_filter = request.GET.get('group_filter')
     if group_filter is None:
@@ -425,7 +455,7 @@ def groups_view_summary(request):
     return {'groups_dict': groups_dict, 'group_capability_dict': group_capability_dict, 'group_filter': group_filter}
 
 
-@view_config(route_name='groups_view_detail', renderer='templates/groups_view_detail.jinja2', permission='edit')
+@view_config(route_name='groups_view_detail', renderer='templates/groups_view_detail.jinja2', permission='view')
 def groups_view_detail(request):
     group_filter = request.GET.get('group_filter')
     if group_filter is None:
@@ -433,8 +463,8 @@ def groups_view_detail(request):
     groups_dict = GroupsService.get_group_names()
     pupil_capability_dict = PupilsService.get_pupils_with_groups(group_filter)
     capabilities_keys = CapabilitiesService.get_capabilities_keys()
-    for pupil in pupil_capability_dict:
-        print(pupil)
     capability_nice = CapabilitiesService.get_capabilities(mode='nice')
     return {'groups_dict': groups_dict, 'pupil_capability_dict': pupil_capability_dict, 'group_filter': group_filter,
             'capabilities_keys': capabilities_keys, 'capabilities_nice': capability_nice,}
+
+

@@ -1,6 +1,6 @@
 from gdpr_permissions.data.capabilities import Capabilities
 from gdpr_permissions.data.dbsession import DbSessionFactory
-
+from gdpr_permissions.services.logging_service import LoggingService
 
 class CapabilitiesService():
     @staticmethod
@@ -59,4 +59,5 @@ class CapabilitiesService():
             exec("capability." + attribute + "='" + cap_to_store[attribute] + "'")
         exec("capability.active=" + str(cap_to_store['active']))
         session.commit()
+        LoggingService.add_entry(cap_to_store, 'capability', 'edit')
         return
