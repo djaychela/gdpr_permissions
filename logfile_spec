@@ -1,0 +1,28 @@
+'datetime':datetime
+'entrytype': 'system','pupil','user','delete'
+
+if 'app':
+  'message':'text message such as startup'
+
+if 'pupil':
+  'id':
+  'first_name':
+  'last_name':
+  'class_id':
+  'damers_web':
+  'damers_blog':
+  'damers_twitter':
+  'damers_class_photo':
+  'damers_prod_dvd':
+  'damers_newsletter':
+  'wistia_video':
+  'dasp_web':
+  'dasp_music_web':
+  'dor_echo':
+  'cel_pound_mag':
+  'cel_pound_web'
+
+if 'user':
+  'user_id':user_id
+  'user_name':user_name
+  'change_made':'created','deleted','password_change'
