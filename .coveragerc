@@ -1,0 +1,3 @@
+[run]
+source = gdpr_permissions
+omit = gdpr_permissions/test*
