@@ -1,0 +1,25 @@
+{% extends "layout.jinja2" %}
+
+{% block content%}
+<div class="content">
+    <h1>Sign In</h1>
+    <p class="lead">Sign in with your username and password to view or edit any records.</p>
+</div>
+    {% if request.authenticated_userid %}
+        Welcome <strong>{{ request.authenticated_userid }}</strong> ::
+        <a href="{{ request.route_url('auth', action='out')}}">Sign Out</a>
+    {% else %}
+        <form action="{{ request.route_url('auth', action='out')}}" method="post" class="form-inline">
+            <div class="form-group">
+                <input type="text" name="username" class="form-control" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" class="form-control" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Sign In" class="btn btn-primary">
+            </div>
+        </form>
+    {% endif %}
+
+{% endblock content %}

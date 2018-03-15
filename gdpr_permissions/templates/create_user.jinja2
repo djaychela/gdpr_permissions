@@ -1,0 +1,41 @@
+{% extends 'layout.jinja2' %}
+
+{% block content %}
+
+<div class="content">
+    <h1><span class="font-semi-bold">Add New User</span></h1>
+    {% if error_list %}
+        {% for error in error_list %}
+        <h1>{{ error }}</h1>
+        {% endfor %}
+    {% endif %}
+    <form action="" method="post">
+        <table class="table">
+
+            <tr>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Password Confirm</th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="username">
+                </td>
+                <td>
+                    <input type="password" name="password">
+                </td>
+                <td>
+                    <input type="password" name="password_confirm">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3"><button type="submit" name="submit" value="submit" class="btn btn-primary">Create New User</button>
+                <button type="submit" name="cancel" value="cancel" class="btn btn-secondary">Cancel</button></td>
+            </tr>
+
+        </table>
+
+    </form>
+
+</div>
+{% endblock content %}

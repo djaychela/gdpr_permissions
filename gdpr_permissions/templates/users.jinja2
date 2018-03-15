@@ -1,0 +1,33 @@
+{% extends "layout.jinja2" %}
+
+{% block content%}
+<div class="content">
+    <h1><span class="font-semi-bold">User Edit Page</span></h1>
+
+</div>
+<div>
+    <table class="table">
+    <thead class="thead-light">
+        <th>Username</th>
+        <th>password change</th>
+        <th>Delete User</th>
+    </thead>
+    {%  for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td><a class="btn btn-primary" href="/admin/set_password?user_id={{ user.id }}">Set Password</a></td>
+            {% if user.username != 'admin' %}
+            <td><a class="btn btn-danger" href="/admin/delete_user?user_id={{ user.id }}">Delete User</a></td>
+            {% else %}
+            <td><a class="btn btn-secondary disabled" href="#">Disabled</a></td>
+            {% endif %}
+
+        </tr>
+    {% endfor %}
+
+    </table>
+<a href="/admin/create_user" class="btn btn-primary">Create New User</a>
+</div>
+
+
+{% endblock content %}

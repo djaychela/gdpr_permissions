@@ -1,0 +1,247 @@
+    @import url(//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700);
+body {
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  color: #444444;
+  background: #ffffff;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+p {
+  font-weight: 300;
+}
+.font-normal {
+  font-weight: 400;
+}
+.font-semi-bold {
+  font-weight: 600;
+}
+.font-bold {
+  font-weight: 700;
+}
+.starter-template {
+  margin-top: 250px;
+}
+.starter-template .content {
+  margin-left: 10px;
+}
+.starter-template .content h1 {
+  margin-top: 10px;
+  font-size: 60px;
+}
+.starter-template .content h1 .smaller {
+  font-size: 40px;
+  color: #111111;
+}
+.starter-template .content .lead {
+  font-size: 25px;
+  color: #111111;
+}
+.starter-template .content .lead .font-normal {
+  color: #000000;
+}
+.starter-template .links {
+  float: right;
+  right: 0;
+  margin-top: 125px;
+}
+.starter-template .links ul {
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+.starter-template .links ul li {
+  list-style: none;
+  display: inline;
+  margin: 0 10px;
+}
+.starter-template .links ul li:first-child {
+  margin-left: 0;
+}
+.starter-template .links ul li:last-child {
+  margin-right: 0;
+}
+.starter-template .links ul li.current-version {
+  color: #f2b7bd;
+  font-weight: 400;
+}
+.starter-template .links ul li a {
+  color: #ffffff;
+}
+.starter-template .links ul li a:hover {
+  text-decoration: underline;
+}
+.starter-template .links ul li .icon-muted {
+  color: #eb8b95;
+  margin-right: 5px;
+}
+.starter-template .links ul li:hover .icon-muted {
+  color: #ffffff;
+}
+.starter-template .copyright {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #f2b7bd;
+  text-transform: lowercase;
+  float: right;
+  right: 0;
+}
+@media (max-width: 1199px) {
+  .starter-template .content h1 {
+    font-size: 45px;
+  }
+  .starter-template .content h1 .smaller {
+    font-size: 30px;
+  }
+  .starter-template .content .lead {
+    font-size: 20px;
+  }
+}
+@media (max-width: 991px) {
+  .starter-template {
+    margin-top: 0;
+  }
+  .starter-template .logo {
+    margin: 40px auto;
+  }
+  .starter-template .content {
+    margin-left: 0;
+    text-align: center;
+  }
+  .starter-template .content h1 {
+    margin-bottom: 20px;
+  }
+  .starter-template .links {
+    float: none;
+    text-align: center;
+    margin-top: 60px;
+  }
+  .starter-template .copyright {
+    float: none;
+    text-align: center;
+  }
+}
+@media (max-width: 767px) {
+  .starter-template .content h1 .smaller {
+    font-size: 25px;
+    display: block;
+  }
+  .starter-template .content .lead {
+    font-size: 16px;
+  }
+  .starter-template .links {
+    margin-top: 40px;
+  }
+  .starter-template .links ul li {
+    display: block;
+    margin: 0;
+  }
+  .starter-template .links ul li .icon-muted {
+    display: none;
+  }
+  .starter-template .copyright {
+    margin-top: 20px;
+  }
+}
+
+/* switch css */
+.onoffswitch {
+    position: relative; width: 90px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 20px;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "NO";
+    padding-left: 10px;
+    background-color: #FF0000; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "YES";
+    padding-right: 10px;
+    background-color: #71C837; color: #FFFFFF;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 18px; margin: 6px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 56px;
+    border: 2px solid #999999; border-radius: 20px;
+    transition: all 0.3s ease-in 0s;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
+
+/* global switch css */
+.globalonoffswitch {
+    position: relative; width: 90px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.globalonoffswitch-checkbox {
+    display: none;
+}
+.globalonoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 20px;
+}
+.globalonoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+.globalonoffswitch-inner:before, .globalonoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+.globalonoffswitch-inner:before {
+    content: "NO";
+    padding-left: 10px;
+    background-color: #34A7C1; color: #FFFFFF;
+}
+.globalonoffswitch-inner:after {
+    content: "YES";
+    padding-right: 10px;
+    background-color: #EEEEEE; color: #999999;
+    text-align: right;
+}
+.globalonoffswitch-switch {
+    display: block; width: 18px; margin: 6px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 56px;
+    border: 2px solid #999999; border-radius: 20px;
+    transition: all 0.3s ease-in 0s;
+}
+.globalonoffswitch-checkbox:checked + .globalonoffswitch-label .globalonoffswitch-inner {
+    margin-left: 0;
+}
+.globalonoffswitch-checkbox:checked + .globalonoffswitch-label .globalonoffswitch-switch {
+    right: 0px;
+}
+

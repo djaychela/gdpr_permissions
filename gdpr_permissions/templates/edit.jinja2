@@ -1,0 +1,117 @@
+{% extends "layout.jinja2" %}
+
+{% block content%}
+    <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="content">
+                <h1><span class="font-semi-bold">Pupil Edit for </span> {{ pupil.first_name }} {{ pupil.last_name }} - ID: {{ pupil.id }}</h1>
+            <form action="" method="post">
+            <table class="table-condensed table-striped col-md-12" id="myTable">
+                <thead>
+                    <th scope = 'col' colspan="3">Name and Class</th>
+                </thead>
+                <tr>
+                    <td colspan="3">
+                            <input type="text" name="first_name" value="{{ pupil.first_name }}">
+                    <input type="text" name="last_name" value="{{ pupil.last_name }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3"><select class="custom-select" name="class_id">
+                    {% for class_entry in classes_dict %}
+                        {% if class_entry == pupil.class_id|int %}
+                            <option value="{{ class_entry }}" selected>{{ classes_dict[class_entry] }}</option>
+                        {% else %}
+                            <option value="{{ class_entry }}">{{ classes_dict[class_entry] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                </td>
+                </tr>
+                    <tbody>
+                        <tr><th scope = 'col'>Data</th>
+                    <th scope = 'col'>Current</th>
+                    <th scope = 'col'>Edit</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Set All</td>
+                        <td>
+                            <div class="globalonoffswitch">
+                            <input type="checkbox" name="ckbCheckAll" class="globalonoffswitch-checkbox" id="ckbCheckAll" value ='No'/>
+                                <label class="globalonoffswitch-label" for="ckbCheckAll">
+                                    <span class="globalonoffswitch-inner"></span>
+                                    <span class="globalonoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    {%  for capability in capability_list %}
+                        <tr class="hideable">
+                            <td>
+                                {{ capability_names[capability] }}
+                            </td>
+                            <td>
+                                {% if capability_current[capability] %}
+                                    <img src="{{request.static_url('gdpr_permissions:static/tick.png')}}" width="25">
+                                {% else %}
+                                    <img src="{{request.static_url('gdpr_permissions:static/cross.png')}}" width="25">
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="{{ capability }}" class="onoffswitch-checkbox" value ='No' \
+                                           id="{{ capability }}" {% if capability_current[capability] %}>
+                                            {% else %}checked>
+                                            {% endif %}
+                                        <label class="onoffswitch-label" for="{{ capability }}">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td>
+                            Groups:
+                        </td>
+                        <td>
+                            {{ pupil['groups'] }}
+                        </td>
+                        <td>
+                            <input type="text" name="groups" value="{{ pupil.groups }}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/admin/delete_pupil?id={{ pupil.id }}" class="btn btn-danger">Delete</a>
+                            <a href="/admin/logfile_pupil_history?id={{ pupil.id }}" class="btn btn-secondary">History</a>
+                        </td>
+                        <td>
+                            <button type="reset" class="btn btn-success">Reset</button>
+                            <a href="/class_view_detail?class_filter=None" class="btn btn-secondary">Return</a>
+                        </td>
+                        <td>
+                            <button type="submit" name="save" value="save" class="btn btn-primary">Save</button>
+                            <button type="submit" name="save_return" value="save_return" class="btn btn-primary">Save and Return</input>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+            <input type="hidden" name="id" value="{{ pupil.id }}">
+            <input type="hidden" name="class_info.class_strand" value="{{ pupil['class_info.class_strand']  }}">
+            <input type="hidden" name="class_info.class_year" value="{{ pupil['class_info.class_year']  }}">
+            <input type="hidden" name="class_info.class_teacher" value="{{ pupil['class_info.class_teacher']  }}">
+            </form>
+        </div>
+    </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+        $("#ckbCheckAll").click(function () {
+            $(".onoffswitch-checkbox").prop('checked', $(this).prop('checked'));
+        });
+    });
+    </script>
+{% endblock content %}

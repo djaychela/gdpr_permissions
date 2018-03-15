@@ -1,0 +1,30 @@
+{% extends 'layout.jinja2' %}
+
+{% block content %}
+        <h1>Capabilities</h1>
+        <span>
+            <table class="table table-sm">
+                <thead class="thead-light">
+                    {% for column in columns %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                <th></th>
+                </thead>
+                <tbody>
+                <tr>
+                    {% for capability in all_capabilities %}
+                        {% for column in columns %}
+                                <td> {{ capability[column] }} </td>
+                        {% endfor %}
+                        <td>
+                            <a class="btn btn-primary" href="/admin/capability_edit?cap_id={{ capability['id'] }}">Edit</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </span>
+
+
+{% endblock content %}

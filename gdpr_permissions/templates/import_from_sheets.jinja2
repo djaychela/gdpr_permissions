@@ -1,0 +1,19 @@
+{% extends "layout.jinja2" %}
+
+{% block content%}
+<div class="content">
+    <h1>Google Sheets Import</h1>
+    {% if not confirm %}
+        <p>This function allows the import of multiple students and their permissions from a suitable Google Sheets file.</p>
+        <p>Clicking on the link below will start the process.</p>
+        <form action="" method="post">
+            <button type="submit" name="confirm" value="confirm" class="btn btn-primary">Click here to import</button>
+        </form>
+    {% else %}
+        <p class="lead">Data is now being imported from the Google Sheets Page.</p>
+        <p>Check the Google Sheets for update - when all rows are marked as done, the process is complete.</p>
+        <p><strong>Please do not refresh this page - the process takes some time.</strong></p>
+    {% endif %}
+</div>
+
+{% endblock content %}

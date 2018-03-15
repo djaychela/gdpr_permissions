@@ -1,0 +1,80 @@
+{% extends 'layout.jinja2' %}
+
+{% block content %}
+    <div class="content">
+    <h1><span class="font-semi-bold">Create New Pupil</span></h1>
+    </div>
+
+    <table class="table" id="myTable">
+
+<form action="" method="post">
+<input type="text" name="first_name" placeholder="First Name">
+<input type="text" name="last_name" placeholder="Last Name">
+<select class="custom-select" name="class_id">
+
+    {% for class_entry in classes_dict %}
+        <option value="{{ class_entry }}">{{ classes_dict[class_entry] }}</option>
+    {% endfor %}
+
+</select>
+
+    <thead class="thead-light">
+        <th scope = 'col'>Data</th>
+        <th scope = 'col'>Setting</th>
+    </thead>
+        <tbody>
+        <tr>
+            <td>Set All</td>
+            <td>
+                <div class="globalonoffswitch">
+            <input type="checkbox" name="ckbCheckAll" class="globalonoffswitch-checkbox" id="ckbCheckAll" value ='No'/>
+            <label class="globalonoffswitch-label" for="ckbCheckAll">
+                        <span class="globalonoffswitch-inner"></span>
+                        <span class="globalonoffswitch-switch"></span>
+                        </label>
+                </div>
+            </td>
+
+
+        </tr>
+        {%  for key in capability_keys %}
+        <tr class="hideable">
+            <td>{{ capability_names[key] }}</td>
+
+            <td>
+                <div class="onoffswitch">
+                    <input type="checkbox" name="{{ key }}" class="onoffswitch-checkbox" value ='No' \
+                           id="{{ key }}" >
+
+                        <label class="onoffswitch-label" for="{{ key }}">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                        </label>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+
+
+        <tr>
+
+            <td>
+                <button type="submit" name="cancel" value="cancel" class="btn btn-secondary">Reset</button>
+            </td>
+            <td>
+                <button type="submit" name="save" value="save" class="btn btn-primary">Create</button>
+            </td>
+        </tr>
+    </tbody>
+    </table>
+
+
+        <script>
+    $(document).ready(function () {
+    $("#ckbCheckAll").click(function () {
+        $(".onoffswitch-checkbox").prop('checked', $(this).prop('checked'));
+    });
+});
+    </script>
+
+{% endblock content %}

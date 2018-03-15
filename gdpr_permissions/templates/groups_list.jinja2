@@ -1,0 +1,31 @@
+{% extends 'layout.jinja2' %}
+
+{% block content %}
+
+
+    <h1><span class="font-semi-bold">Groups</span></h1>
+    <span>
+        <table class="table table-sm">
+            <thead class="thead-light">
+                {% for attribute in group_attr_list %}
+                    <th>{{ attribute }}</th>
+                {% endfor %}
+            <th></th>
+            </thead>
+            <tbody>
+            <tr>
+                {% for group in groups_list %}
+                    {% for attribute in group_attr_list %}
+                       <td> {{ group[attribute] }} </td>
+                    {% endfor %}
+                    <td>
+                        <a class="btn btn-primary" href="/admin/group_edit?group_id={{ group['id'] }}">Edit</a>
+                        <a class="btn btn-danger" href="/admin/group_delete?group_id={{ group['id'] }}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        <tr><td colspan="5"><a class="btn btn-primary" href="/admin/group_create">Create New Group</a></td> </tr>
+            </tbody>
+        </table>
+    </span>
+{% endblock content %}
