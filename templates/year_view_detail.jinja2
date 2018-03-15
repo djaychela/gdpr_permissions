@@ -44,8 +44,8 @@
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
             <a class="dropdown-item" href="?year_filter=None">All Years</a>
             {% for year_entry in year_group_list %}
-                {% if class_entry == year_filter %}
-                    <a class="dropdown-item active" href="?year_filter={{ class_entry }}">{{ classes_dict[class_entry] }}</a>
+                {% if year_entry == year_filter %}
+                    <a class="dropdown-item active" href="?year_filter={{ year_entry }}">{{ year_entry }}</a>
                 {% else %}
                     <a class="dropdown-item" href="?year_filter={{ year_entry }}">{{ year_entry }}</a>
                 {% endif %}
