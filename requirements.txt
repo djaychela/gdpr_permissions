@@ -1,0 +1,6 @@
+sqlalchemy
+pyramid
+oauth2client
+PyOpenSSL
+gspread
+passlib
