@@ -3,6 +3,7 @@ from gdpr_permissions.data.pupil import Pupils
 from gdpr_permissions.services.capabilities_service import CapabilitiesService
 from gdpr_permissions.services.logging_service import LoggingService
 from gdpr_permissions.config import config
+from gdpr_permissions.services.preferences_service import Preferences
 
 
 class PupilsService:
@@ -197,10 +198,11 @@ class PupilsService:
 
     @staticmethod
     def pupil_year_update():
+        number_of_year_groups = int(Preferences.get_preference('number_of_year_groups'))
         session = DbSessionFactory.create_session()
         for pupil in session.query(Pupils).all():
             current_pupil_class = pupil.class_id
-            if current_pupil_class % 5 == 0:
+            if current_pupil_class % number_of_year_groups == 0:
                 session.query(Pupils).filter(Pupils.id == pupil.id).delete()
                 LoggingService.delete_user_entries(pupil.id)
             else:
@@ -271,7 +273,9 @@ class PupilsService:
                 for pupil in session.query(Pupils) \
                         .filter(Pupils.overview == overview).filter(Pupils.groups != '') \
                         .order_by(Pupils.last_name):
-                    if str(group_filter) in pupil.groups:
+                    groups = pupil.groups
+                    group_list = groups.split(' ')
+                    if str(group_filter) in group_list:
                         current_pupils_list.append(pupil.first_name + " " + pupil.last_name.upper())
                 pupil_overview_dict[overview] = current_pupils_list
         return pupil_overview_dict

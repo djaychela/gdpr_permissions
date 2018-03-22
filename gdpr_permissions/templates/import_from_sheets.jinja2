@@ -3,11 +3,12 @@
 {% block content%}
 <div class="content">
     <h1>Google Sheets Import</h1>
-    {% if not confirm %}
-        <p>This function allows the import of multiple students and their permissions from a suitable Google Sheets file.</p>
+    {% if not import_sheets %}
+        <p>This area allows the import of multiple students and their permissions from a suitable Google Sheets file.</p>
+        <p>Current file for access is <strong>{{ sheets_import_json_file }}</strong></p>
         <p>Clicking on the link below will start the process.</p>
         <form action="" method="post">
-            <button type="submit" name="confirm" value="confirm" class="btn btn-primary">Click here to import</button>
+            <button type="submit" name="import_sheets" value="import_sheets" class="btn btn-primary">Click here to import</button>
         </form>
     {% else %}
         <p class="lead">Data is now being imported from the Google Sheets Page.</p>

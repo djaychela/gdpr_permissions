@@ -6,9 +6,10 @@ from gdpr_permissions.services.user_service import UsersService
 from gdpr_permissions.services.classes_service import ClassesService
 from gdpr_permissions.services.accounts_service import AccountsService
 from gdpr_permissions.services.capabilities_service import CapabilitiesService
-from gdpr_permissions.services.sheets_import import SheetsImport
+from gdpr_permissions.services.sheets_service import SheetsImport
 from gdpr_permissions.services.logging_service import LoggingService
 from gdpr_permissions.services.groups_service import GroupsService
+from gdpr_permissions.services.preferences_service import Preferences
 import threading
 
 
@@ -134,10 +135,12 @@ def year_view_detail(request):
 
 @view_config(route_name='import_from_sheets', renderer='templates/import_from_sheets.jinja2', permission='edit')
 def import_from_sheets(request):
-    confirm = request.POST.get('confirm')
-    if confirm:
-        MyThread().start()
-    return {'confirm': confirm}
+    import_sheets = request.POST.get('import_sheets')
+    sheets_import_json_file = Preferences.get_preference('sheets_import_json_file')
+    if import_sheets:
+        SheetsImport.export_column_names_to_sheet()
+        # MyThread().start()
+    return {'import_sheets': import_sheets, 'sheets_import_json_file': sheets_import_json_file}
 
 
 @view_config(route_name='auth', match_param='action=out', renderer='string')
@@ -180,7 +183,7 @@ def delete_pupil(request):
     if mode == 'confirm':
         PupilsService.delete_single_pupil(pupil_id)
         LoggingService.delete_user_entries(pupil_id)
-        return HTTPFound(location=request.route_url('list'))
+        return HTTPFound(location=request.route_url('year_view_summary'))
     return {'pupil_id': pupil_id, 'pupil_name': pupil_name}
 
 
@@ -245,7 +248,7 @@ def create_pupil(request):
     cancel = request.POST.get('cancel')
     save = request.POST.get('save')
     if cancel:
-        return HTTPFound(location=request.route_url('list'))
+        return HTTPFound(location=request.route_url('year_view_summary'))
     if save:
         pupil_data_to_store = {}
         for attribute in PupilsService.attributes():
@@ -253,7 +256,7 @@ def create_pupil(request):
         for capability in CapabilitiesService.get_capabilities():
             pupil_data_to_store[capability] = convert_form_boolean(request.POST.get(capability))
         PupilsService.create_new_pupil(pupil_data_to_store)
-        return HTTPFound(location=request.route_url('list'))
+        return HTTPFound(location=request.route_url('year_view_summary'))
     capability_keys = CapabilitiesService.get_capabilities_keys()
     capability_names = CapabilitiesService.get_capabilities(mode='nice')
     classes_dict = ClassesService.get_all_classes()
@@ -304,7 +307,6 @@ def class_edit(request):
         class_to_store['active'] = active
         for attribute in attributes[1:-1]:
             class_to_store[attribute] = eval(attribute)
-        print(class_to_store)
         ClassesService.store_single_class_info(class_to_store)
         return HTTPFound(location=request.route_url('classes_list'))
     class_info = ClassesService.get_single_class_info(class_id)

@@ -6,6 +6,7 @@ import os
 from gdpr_permissions.data.dbsession import DbSessionFactory
 import gdpr_permissions
 from gdpr_permissions.services.logging_service import LoggingService
+from gdpr_permissions.services.preferences_service import Preferences
 
 
 

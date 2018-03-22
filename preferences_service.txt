@@ -1,3 +1,13 @@
+preferences:
+
+oath file name
+
+oath file location
+
+year group update number (number of year groups in a school for annual update)
+
+
+
 # class related info
 class_attributes_list = ['id','class_strand','class_year','class_teacher', 'active']
 
